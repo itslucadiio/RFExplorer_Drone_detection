@@ -35,7 +35,7 @@ void serialManager::startConnection(){
         rf_port = serialName;
         rf->setPortName(rf_port);
         qDebug() << (rf->open(QIODevice::ReadWrite) ? "True" : "False");
-        connect(rf, SIGNAL(readyRead()), this, SLOT(read_data()));
+        connect(rf, SIGNAL(readyRead()), this, SLOT(read_data()), Qt::DirectConnection);
         //rf->setDataBits(QSerialPort::Data8);
         rf->setBaudRate(500000);
         //rf->setParity(QSerialPort::NoParity);
@@ -54,7 +54,7 @@ void serialManager::send_data(QByteArray data)
         rf->write(data);
         rf->waitForBytesWritten(500);
         if (m_debug) emit log(QString("[serialManager.send_data] Data sent!"));
-        read_data();
+        //read_data();
     }
 }
 void serialManager::read_data()
@@ -62,7 +62,8 @@ void serialManager::read_data()
     while (rf->canReadLine())
     {
         const QByteArray data = rf->readLine();
-        qDebug() << "data: " <<  data;
+        QString stringData = QString(data);
+        qDebug() << "data: " <<  stringData;
     }
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
