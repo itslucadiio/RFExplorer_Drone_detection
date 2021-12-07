@@ -6,6 +6,9 @@
 #include <QByteArray>
 #include <math.h>
 #include <tgmath.h>
+#include "rfexplorer.h"
+#include <QDebug>
+
 
 class serialManager : public QObject
 {
@@ -17,23 +20,25 @@ class serialManager : public QObject
     public slots:
         void startConnection();
         void sendCommand(QString msg);
-        void send_data(QByteArray data);
         void read_data();
         void initialize(bool debug);
 
     signals:
         //Write a message to log
         void log(const QString& text);
+        void send_data(QByteArray data);
 
     private:
-        QSerialPort *rf;
+        QVector<QSerialPort*> rf;
 
         static const quint16 rf_EXPLORER = 60000;
-        QString rf_port;
-        bool rf_available;
 
         //Debug flag
         bool m_debug;
+
+        void decode_sweep(QByteArray data);
+
+        QVector<RFExplorer*> m_devices;
 
 };
 
