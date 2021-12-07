@@ -47,69 +47,6 @@ void serialManager::startConnection(){
     }
 
 }
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
-void serialManager::read_data()
-{
-    foreach (QSerialPort* port, rf) {
-        while(port->canReadLine()){
-            const QByteArray data = port->readLine();
-            qDebug() << "data: " <<  data;
-
-            QString stringData = QString(data);
-            if (stringData.contains("(C) Ariel Rocholl"))
-            {
-                if (m_debug) emit log(QString("[serialManager] RF authenticated! Hi Ariel Rocholl."));
-            }
-
-            //Configuration params
-//                if (stringData.contains("#C2-F:"))
-//                {
-//                    QVector<QString> setupFields = ["Start_Freq", "Freq_step", "Amp_Top", "Amp_Bottom", "Sweep_Steps", "Excp_Module_Active", "Current_Mode", "Min_Freq", "Max_Freq", "Max_Span", "Rbw", "dB_Offset", "Undoccumented"];
-//                    QString dataString = stringData.split(":")[1];
-//                    QStringList configList = dataString.split(",");
-//                    if (configList.length() != setupFields.length())
-//                        if (m_debug) emit log(QString("[serialManager] Ereceived unexpectd number of config values."));
-
-//                    foreach(QString str, setupFields)
-//                    {
-
-//                    }
-//                }
-
-
-        }
-    }
-
-//    while (rf->canReadLine())
-//    {
-//        const QByteArray data = rf->readLine();
-//        qDebug() << "data: " <<  data;
-
-//        QString stringData = QString(data);
-//        if (stringData.contains("(C) Ariel Rocholl"))
-//        {
-//            if (m_debug) emit log(QString("[serialManager] RF authenticated! Hi Ariel Rocholl."));
-//        }
-
-//        //Configuration params
-//        if (stringData.contains("#C2-F:"))
-//        {
-//            QVector<QString> setupFields = {"Start_Freq", "Freq_step", "Amp_Top", "Amp_Bottom", "Sweep_Steps", "Excp_Module_Active", "Current_Mode", "Min_Freq", "Max_Freq", "Max_Span", "Rbw", "dB_Offset, "Undoccumented};
-//            QString dataString = stringData.split(":")[1];
-//            QStringList configList = dataString.split(",");
-//            if (configList.length() != setupFields.length())
-//                if (m_debug) emit log(QString("[serialManager] Ereceived unexpectd number of config values."));
-
-//            foreach(QString str, setupFields)
-//            {
-
-//            }
-//        }
-
-
-//    }
-}
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -123,6 +60,5 @@ void serialManager::sendCommand(QString msg)
 
     QByteArray data = array.toUtf8();
     emit send_data(data);
-
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------

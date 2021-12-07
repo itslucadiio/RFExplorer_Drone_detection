@@ -20,7 +20,6 @@ class serialManager : public QObject
     public slots:
         void startConnection();
         void sendCommand(QString msg);
-        void read_data();
         void initialize(bool debug);
 
     signals:

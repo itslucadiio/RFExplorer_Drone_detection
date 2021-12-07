@@ -16,64 +16,64 @@ void RFExplorer::initialize(QSerialPort* port, bool debug)
 
 
 //GETTERS AND SETTERS ------------------------------------------------------------------------------------------------------------------------------------
-QString RFExplorer::getStart_Freq() const
+int RFExplorer::getUndoccumented() const
 {
-    return Start_Freq;
+    return Undoccumented;
 }
 
-void RFExplorer::setStart_Freq(const QString &value)
+void RFExplorer::setUndoccumented(int value)
 {
-    Start_Freq = value;
+    Undoccumented = value;
 }
 
-QString RFExplorer::getFreq_step() const
+int RFExplorer::getDB_Offset() const
 {
-    return Freq_step;
+    return dB_Offset;
 }
 
-void RFExplorer::setFreq_step(const QString &value)
+void RFExplorer::setDB_Offset(int value)
 {
-    Freq_step = value;
+    dB_Offset = value;
 }
 
-QString RFExplorer::getAmp_Top() const
+int RFExplorer::getRbw() const
 {
-    return Amp_Top;
+    return Rbw;
 }
 
-void RFExplorer::setAmp_Top(const QString &value)
+void RFExplorer::setRbw(int value)
 {
-    Amp_Top = value;
+    Rbw = value;
 }
 
-QString RFExplorer::getAmp_Bottom() const
+int RFExplorer::getMax_Span() const
 {
-    return Amp_Bottom;
+    return Max_Span;
 }
 
-void RFExplorer::setAmp_Bottom(const QString &value)
+void RFExplorer::setMax_Span(int value)
 {
-    Amp_Bottom = value;
+    Max_Span = value;
 }
 
-QString RFExplorer::getSweep_Steps() const
+int RFExplorer::getMax_Freq() const
 {
-    return Sweep_Steps;
+    return Max_Freq;
 }
 
-void RFExplorer::setSweep_Steps(const QString &value)
+void RFExplorer::setMax_Freq(int value)
 {
-    Sweep_Steps = value;
+    Max_Freq = value;
 }
 
-QString RFExplorer::getExcp_Module_Active() const
+int RFExplorer::getMin_Freq() const
 {
-    return Excp_Module_Active;
+    return Min_Freq;
 }
 
-void RFExplorer::setExcp_Module_Active(const QString &value)
+void RFExplorer::setMin_Freq(int value)
 {
-    Excp_Module_Active = value;
+    Min_Freq = value;
 }
 
 QString RFExplorer::getCurrent_Mode() const
@@ -86,84 +86,64 @@ void RFExplorer::setCurrent_Mode(const QString &value)
     Current_Mode = value;
 }
 
-QString RFExplorer::getMin_Freq() const
+int RFExplorer::getExcp_Module_Active() const
 {
-    return Min_Freq;
+    return Excp_Module_Active;
 }
 
-void RFExplorer::setMin_Freq(const QString &value)
+void RFExplorer::setExcp_Module_Active(int value)
 {
-    Min_Freq = value;
+    Excp_Module_Active = value;
 }
 
-QString RFExplorer::getMax_Freq() const
+int RFExplorer::getSweep_Steps() const
 {
-    return Max_Freq;
+    return Sweep_Steps;
 }
 
-void RFExplorer::setMax_Freq(const QString &value)
+void RFExplorer::setSweep_Steps(int value)
 {
-    Max_Freq = value;
+    Sweep_Steps = value;
 }
 
-QString RFExplorer::getMax_Span() const
+int RFExplorer::getAmp_Bottom() const
 {
-    return Max_Span;
+    return Amp_Bottom;
 }
 
-void RFExplorer::setMax_Span(const QString &value)
+void RFExplorer::setAmp_Bottom(int value)
 {
-    Max_Span = value;
+    Amp_Bottom = value;
 }
 
-QString RFExplorer::getRbw() const
+int RFExplorer::getAmp_Top() const
 {
-    return Rbw;
+    return Amp_Top;
 }
 
-void RFExplorer::setRbw(const QString &value)
+void RFExplorer::setAmp_Top(int value)
 {
-    Rbw = value;
+    Amp_Top = value;
 }
 
-QString RFExplorer::getDB_Offset() const
+int RFExplorer::getFreq_step() const
 {
-    return dB_Offset;
+    return Freq_step;
 }
 
-void RFExplorer::setDB_Offset(const QString &value)
+void RFExplorer::setFreq_step(int value)
 {
-    dB_Offset = value;
+    Freq_step = value;
 }
 
-QString RFExplorer::getUndoccumented() const
+int RFExplorer::getStart_Freq() const
 {
-    return Undoccumented;
+    return Start_Freq;
 }
 
-void RFExplorer::setUndoccumented(const QString &value)
+void RFExplorer::setStart_Freq(int value)
 {
-    Undoccumented = value;
-}
-
-QString RFExplorer::getPort_name() const
-{
-    return port_name;
-}
-
-void RFExplorer::setPort_name(const QString &value)
-{
-    port_name = value;
-}
-
-QString RFExplorer::getSerial_number() const
-{
-    return serial_number;
-}
-
-void RFExplorer::setSerial_number(const QString &value)
-{
-    serial_number = value;
+    Start_Freq = value;
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -189,6 +169,38 @@ void RFExplorer::read_data()
         if (stringData.contains("(C) Ariel Rocholl"))
         {
             if (m_debug) emit log(QString("[serialManager] RF authenticated! Hi Ariel Rocholl."));
+        }
+
+        //Configuration params
+        if (stringData.contains("#C2-F:"))
+        {
+            QVector<QString> setupFields = {"Start_Freq", "Freq_step", "Amp_Top", "Amp_Bottom", "Sweep_Steps", "Excp_Module_Active", "Current_Mode", "Min_Freq", "Max_Freq", "Max_Span", "Rbw", "dB_Offset", "Undoccumented"};
+            QVector<QString> modeFields = {"Spectrum Analizer", "RF Generator", "Wifi Analizer", "Unknown"};
+            QString dataString = stringData.split(":")[1];
+            QStringList configList = dataString.split(",");
+            if (configList.length() != setupFields.length())
+                if (m_debug) emit log(QString("[serialManager.read_data] Received unexpectd number of config values."));
+
+            try
+            {
+                setStart_Freq(configList[0].toInt());
+                setFreq_step(configList[1].toInt());
+                setAmp_Top(configList[2].toInt());
+                setAmp_Bottom(configList[3].toInt());
+                setSweep_Steps(configList[4].toInt());
+                setExcp_Module_Active(configList[5].toInt());
+                setCurrent_Mode(modeFields[configList[6].toInt()]);
+                setMin_Freq(configList[7].toInt());
+                setMax_Freq(configList[8].toInt());
+                setMax_Span(configList[9].toInt());
+                setRbw(configList[10].toInt());
+                setDB_Offset(configList[11].toInt());
+                setUndoccumented(configList[12].trimmed().toInt());
+            }
+            catch (...) {
+                if (m_debug) emit log(QString("[serialManager.read_data] Some error occurred."));
+            }
+
         }
     }
 }

@@ -13,50 +13,44 @@ public:
 
     void initialize(QSerialPort* port, bool debug);
 
-    QString getStart_Freq() const;
-    void setStart_Freq(const QString &value);
+    int getStart_Freq() const;
+    void setStart_Freq(int value);
 
-    QString getFreq_step() const;
-    void setFreq_step(const QString &value);
+    int getFreq_step() const;
+    void setFreq_step(int value);
 
-    QString getAmp_Top() const;
-    void setAmp_Top(const QString &value);
+    int getAmp_Top() const;
+    void setAmp_Top(int value);
 
-    QString getAmp_Bottom() const;
-    void setAmp_Bottom(const QString &value);
+    int getAmp_Bottom() const;
+    void setAmp_Bottom(int value);
 
-    QString getSweep_Steps() const;
-    void setSweep_Steps(const QString &value);
+    int getSweep_Steps() const;
+    void setSweep_Steps(int value);
 
-    QString getExcp_Module_Active() const;
-    void setExcp_Module_Active(const QString &value);
+    int getExcp_Module_Active() const;
+    void setExcp_Module_Active(int value);
 
     QString getCurrent_Mode() const;
     void setCurrent_Mode(const QString &value);
 
-    QString getMin_Freq() const;
-    void setMin_Freq(const QString &value);
+    int getMin_Freq() const;
+    void setMin_Freq(int value);
 
-    QString getMax_Freq() const;
-    void setMax_Freq(const QString &value);
+    int getMax_Freq() const;
+    void setMax_Freq(int value);
 
-    QString getMax_Span() const;
-    void setMax_Span(const QString &value);
+    int getMax_Span() const;
+    void setMax_Span(int value);
 
-    QString getRbw() const;
-    void setRbw(const QString &value);
+    int getRbw() const;
+    void setRbw(int value);
 
-    QString getDB_Offset() const;
-    void setDB_Offset(const QString &value);
+    int getDB_Offset() const;
+    void setDB_Offset(int value);
 
-    QString getUndoccumented() const;
-    void setUndoccumented(const QString &value);
-
-    QString getPort_name() const;
-    void setPort_name(const QString &value);
-
-    QString getSerial_number() const;
-    void setSerial_number(const QString &value);
+    int getUndoccumented() const;
+    void setUndoccumented(int value);
 
 signals:
     void log(const QString& text); // Write message to log
@@ -72,19 +66,19 @@ private:
     QString port_name = "";
     QString serial_number = "";
 
-    QString Start_Freq = "";
-    QString Freq_step = "";
-    QString Amp_Top = "";
-    QString Amp_Bottom = "";
-    QString Sweep_Steps = "";
-    QString Excp_Module_Active = "";
+    int Start_Freq = 0;
+    int Freq_step = 0;
+    int Amp_Top = 0;
+    int Amp_Bottom = 0;
+    int Sweep_Steps = 0;
+    int Excp_Module_Active = 0;
     QString Current_Mode = "";
-    QString Min_Freq = "";
-    QString Max_Freq = "";
-    QString Max_Span = "";
-    QString Rbw = "";
-    QString dB_Offset = "";
-    QString Undoccumented = "";
+    int Min_Freq = 0;
+    int Max_Freq = 0;
+    int Max_Span = 0;
+    int Rbw = 0;
+    int dB_Offset = 0;
+    int Undoccumented = 0;
 
     bool m_debug;
 
