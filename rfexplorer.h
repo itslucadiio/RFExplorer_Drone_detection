@@ -8,6 +8,7 @@
 struct Detection
 {
     double freq;
+    double power;
     int counter;
 };
 
