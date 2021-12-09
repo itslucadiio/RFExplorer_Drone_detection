@@ -320,11 +320,24 @@ void RFExplorer::read_data()
                 }
             }
 
-            //qDebug() << "THRESHOLD: " << getThreshold();
-            //qDebug() << "POWER VALUES: " << powerVector;
-            //qDebug() << "FREQ VALUES: " << freqsVector;
-            //qDebug() << "DETECTIONS: " << ;
         }
     }
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+void RFExplorer::send_config(double start_freq, double end_freq)
+{
+    QString data;
+    data.append("C2-F:");
+    data.append(QString::number(start_freq));
+    data.append(",");
+    data.append(QString::number(end_freq));
+    data.append(",");
+    data.append(QString(getAmp_Top()));
+    data.append(",");
+    data.append(QString(getAmp_Bottom()));
+
+    QByteArray byteData = data.toUtf8();
+    send_data(byteData);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------

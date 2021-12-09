@@ -40,6 +40,7 @@ void serialManager::startConnection(){
                 connect(newSerial, SIGNAL(readyRead()), rf_device, SLOT(read_data()), Qt::DirectConnection);
                 connect(this, SIGNAL(send_data(QByteArray)), rf_device, SLOT(send_data(QByteArray)), Qt::DirectConnection);
                 connect(rf_device, SIGNAL(log(QString)), this, SIGNAL(log(QString)), Qt::DirectConnection);
+                connect(this, SIGNAL(send_config(double, double)), rf_device, SLOT(send_config(double,double)), Qt::DirectConnection);
 
                 if (m_debug) emit log(QString("[serialManager.startConnection] New RF connected at port %1!").arg(QString(serialName)));
             }
@@ -60,5 +61,10 @@ void serialManager::sendCommand(QString msg)
 
     QByteArray data = array.toUtf8();
     emit send_data(data);
+}
+//SLOT TO SEND CONFIG FROM FRONTEND TO RF EXPLORER
+void serialManager::sendConfig(double start_freq, double end_freq)
+{
+    emit send_config(start_freq, end_freq);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
