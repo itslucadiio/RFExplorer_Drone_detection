@@ -5,6 +5,12 @@
 #include <QSerialPort>
 #include <QDebug>
 
+struct Detection
+{
+    double freq;
+    int counter;
+};
+
 class RFExplorer : public QObject
 {
     Q_OBJECT
@@ -71,6 +77,8 @@ private:
 
     QString port_name = "";
     QString serial_number = "";
+
+    QVector<Detection> detections;
 
     int threshold = 0;
 
