@@ -218,7 +218,7 @@ void RFExplorer::read_data()
                 setRbw(configList[10].toInt());
                 setDB_Offset(configList[11].toInt());
                 setUndoccumented(configList[12].trimmed().toInt());
-                //emit signal
+                //emit signal with config
             }
             catch (...) {
                 if (m_debug) emit log(QString("[serialManager.read_data] Some error occurred."));
@@ -229,7 +229,7 @@ void RFExplorer::read_data()
         if (stringData.contains("#Sn"))
         {
             setSerial_number(stringData.split("Sn")[1].trimmed());
-            //emit signal
+            //emit signal with config
         }
 
         //Data
@@ -319,7 +319,8 @@ void RFExplorer::read_data()
                     }
                 }
             }
-
+            //emit signal with powerVector and freqsVector
+            //emit signal with detections Vector(struct)
         }
     }
 }
@@ -339,5 +340,10 @@ void RFExplorer::send_config(double start_freq, double end_freq)
 
     QByteArray byteData = data.toUtf8();
     send_data(byteData);
+}
+
+void RFExplorer::edit_threshold(int threshold)
+{
+    setThreshold(threshold);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------

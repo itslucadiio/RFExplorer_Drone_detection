@@ -72,6 +72,7 @@ public slots:
     void send_data(QByteArray data);
     void read_data();
     void send_config(double start_freq, double end_freq);
+    void edit_threshold(int threshold);
 
 private:
 

@@ -41,6 +41,7 @@ void serialManager::startConnection(){
                 connect(this, SIGNAL(send_data(QByteArray)), rf_device, SLOT(send_data(QByteArray)), Qt::DirectConnection);
                 connect(rf_device, SIGNAL(log(QString)), this, SIGNAL(log(QString)), Qt::DirectConnection);
                 connect(this, SIGNAL(send_config(double, double)), rf_device, SLOT(send_config(double,double)), Qt::DirectConnection);
+                connect(this, SIGNAL(edit_threhold(int)), rf_device, SLOT(edit_threshold(int)), Qt::DirectConnection);
 
                 if (m_debug) emit log(QString("[serialManager.startConnection] New RF connected at port %1!").arg(QString(serialName)));
             }
@@ -66,5 +67,10 @@ void serialManager::sendCommand(QString msg)
 void serialManager::sendConfig(double start_freq, double end_freq)
 {
     emit send_config(start_freq, end_freq);
+}
+//SLOT TO SEND THRESHOLD FROM FRONTEND TO RF EXPLORER
+void serialManager::editThrehold(int threshold)
+{
+    emit edit_threhold(threshold);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------

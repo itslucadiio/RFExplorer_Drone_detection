@@ -22,12 +22,14 @@ class serialManager : public QObject
         void sendCommand(QString msg);
         void initialize(bool debug);
         void sendConfig(double start_freq, double end_freq);
+        void editThrehold(int threshold);
 
     signals:
         //Write a message to log
         void log(const QString& text);
         void send_data(QByteArray data);
         void send_config(double start_freq, double end_freq);
+        void edit_threhold(int threshold);
 
     private:
         QVector<QSerialPort*> rf;
