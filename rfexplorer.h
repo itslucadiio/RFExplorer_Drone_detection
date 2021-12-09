@@ -52,6 +52,12 @@ public:
     int getUndoccumented() const;
     void setUndoccumented(int value);
 
+    QString getSerial_number() const;
+    void setSerial_number(const QString &value);
+
+    int getThreshold() const;
+    void setThreshold(int value);
+
 signals:
     void log(const QString& text); // Write message to log
 
@@ -65,6 +71,8 @@ private:
 
     QString port_name = "";
     QString serial_number = "";
+
+    int threshold = 0;
 
     int Start_Freq = 0;
     int Freq_step = 0;

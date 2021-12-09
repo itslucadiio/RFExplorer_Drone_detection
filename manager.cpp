@@ -29,8 +29,8 @@ void manager::initialize(QVariantMap* parameters, bool debug)
 void manager::start_rf()
 {
     emit sendMessage("r");          //Reset
-    QThread::sleep(20);
+    QThread::sleep(10);
     emit sendMessage("C0");         //Request config datas
-    QThread::sleep(20);
+    QThread::sleep(10);
     emit sendMessage("CH");         //Stop spectrum analizer data dump
 }
