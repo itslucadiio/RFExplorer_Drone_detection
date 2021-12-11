@@ -12,14 +12,21 @@ void manager::initialize(QVariantMap* parameters, bool debug)
     m_parameters = parameters;
 
     //SERIAL---------------------------
-    serialManager *rf_explorer = new serialManager();
-    QThread *rf_explorer_thread = new QThread();
-    rf_explorer->moveToThread(rf_explorer_thread);
-    QObject::connect(rf_explorer_thread, &QThread::started, rf_explorer, &serialManager::startConnection);
-    QObject::connect(rf_explorer, SIGNAL(log(QString)), this, SIGNAL(log(QString)), Qt::DirectConnection);
-    QObject::connect(this, SIGNAL(sendMessage(QString)), rf_explorer, SLOT(sendCommand(QString)));
-    rf_explorer->initialize(debug);
-    rf_explorer_thread->start();
+    serialManager *serialer = new serialManager();
+    QThread *serialer_thread = new QThread();
+    serialer->moveToThread(serialer_thread);
+    QObject::connect(serialer_thread, &QThread::started, serialer, &serialManager::startConnection);
+    QObject::connect(serialer, SIGNAL(log(QString)), this, SIGNAL(log(QString)), Qt::DirectConnection);
+    QObject::connect(this, SIGNAL(sendMessage(QString)), serialer, SLOT(sendCommand(QString)));
+    QObject::connect(this, SIGNAL(send_config(double,double)), serialer, SLOT(send_config(double,double)), Qt::DirectConnection);
+    QObject::connect(this, SIGNAL(edit_threhold(int)), serialer, SLOT(edit_threshold(int)), Qt::DirectConnection);
+    //SIGNALS TO RECEIVE DATA FROM RF EXPLORER
+    QObject::connect(serialer, SIGNAL(new_config(double,double)), this, SIGNAL(new_config(double,double)), Qt::DirectConnection);
+    QObject::connect(serialer, SIGNAL(new_serial(QString)), this, SIGNAL(new_serial(QString)), Qt::DirectConnection);
+    QObject::connect(serialer, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), this, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), Qt::DirectConnection);
+    QObject::connect(serialer, SIGNAL(active_detections(QVector<Detection>)), this, SIGNAL(active_detections(QVector<Detection>)), Qt::DirectConnection);
+    serialer->initialize(debug);
+    serialer_thread->start();
     //---------------------------------
 
 }
@@ -34,3 +41,17 @@ void manager::start_rf()
     QThread::sleep(100);
     emit sendMessage("CH");         //Stop spectrum analizer data dump
 }
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+//SLOT TO SEND CONFIG FROM FRONTEND TO RF EXPLORER
+void manager::sendConfig(double start_freq, double end_freq)
+{
+    emit send_config(start_freq, end_freq);
+}
+//SLOT TO SEND THRESHOLD FROM FRONTEND TO RF EXPLORER
+void manager::editThrehold(int threshold)
+{
+    emit edit_threhold(threshold);
+}
+//-------------------------------------------------------------------------------------------------------------------------------------------------------

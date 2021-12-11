@@ -4,13 +4,7 @@
 #include <QObject>
 #include <QSerialPort>
 #include <QDebug>
-
-struct Detection
-{
-    double freq;
-    double power;
-    int counter;
-};
+#include "utils.h"
 
 class RFExplorer : public QObject
 {
@@ -67,6 +61,10 @@ public:
 
 signals:
     void log(const QString& text); // Write message to log
+    void new_config(double start_freq, double end_freq);
+    void new_serial(QString serial);
+    void powers_freqs(QVector<float> powerVector, QVector<double> freqsVector);
+    void active_detections(QVector<Detection> detections);
 
 public slots:
     void send_data(QByteArray data);

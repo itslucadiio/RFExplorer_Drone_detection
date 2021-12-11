@@ -10,7 +10,8 @@ SOURCES += \
         main.cpp \
         manager.cpp \
         rfexplorer.cpp \
-        serialmanager.cpp
+        serialmanager.cpp \
+        utils.cpp
 
 RESOURCES += qml.qrc
 
@@ -28,4 +29,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     manager.h \
     rfexplorer.h \
-    serialmanager.h
+    serialmanager.h \
+    utils.h

@@ -219,6 +219,7 @@ void RFExplorer::read_data()
                 setDB_Offset(configList[11].toInt());
                 setUndoccumented(configList[12].trimmed().toInt());
                 //emit signal with config
+                emit new_config(getStart_Freq(), getMax_Freq());
             }
             catch (...) {
                 if (m_debug) emit log(QString("[serialManager.read_data] Some error occurred."));
@@ -230,6 +231,7 @@ void RFExplorer::read_data()
         {
             setSerial_number(stringData.split("Sn")[1].trimmed());
             //emit signal with config
+            emit new_serial(getSerial_number());
         }
 
         //Data
@@ -320,7 +322,10 @@ void RFExplorer::read_data()
                 }
             }
             //emit signal with powerVector and freqsVector
+            emit powers_freqs(powerVector, freqsVector);
             //emit signal with detections Vector(struct)
+            emit active_detections(detections);
+
         }
     }
 }
@@ -328,6 +333,7 @@ void RFExplorer::read_data()
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 void RFExplorer::send_config(double start_freq, double end_freq)
 {
+    //Change config request of RF Explorer device
     QString data;
     data.append("C2-F:");
     data.append(QString::number(start_freq));

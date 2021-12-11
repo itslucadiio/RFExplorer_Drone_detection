@@ -6,8 +6,10 @@
 #include <QByteArray>
 #include <math.h>
 #include <tgmath.h>
-#include "rfexplorer.h"
 #include <QDebug>
+
+#include "rfexplorer.h"
+#include "utils.h"
 
 
 class serialManager : public QObject
@@ -30,6 +32,10 @@ class serialManager : public QObject
         void send_data(QByteArray data);
         void send_config(double start_freq, double end_freq);
         void edit_threhold(int threshold);
+        void new_config(double start_freq, double end_freq);
+        void new_serial(QString serial);
+        void powers_freqs(QVector<float> powerVector, QVector<double> freqsVector);
+        void active_detections(QVector<Detection> detections);
 
     private:
         QVector<QSerialPort*> rf;
