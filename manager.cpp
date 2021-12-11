@@ -25,6 +25,7 @@ void manager::initialize(QVariantMap* parameters, bool debug)
     QObject::connect(serialer, SIGNAL(new_serial(QString)), this, SIGNAL(new_serial(QString)), Qt::DirectConnection);
     QObject::connect(serialer, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), this, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), Qt::DirectConnection);
     QObject::connect(serialer, SIGNAL(active_detections(QVector<Detection>)), this, SIGNAL(active_detections(QVector<Detection>)), Qt::DirectConnection);
+    //Note: Detection struct -> import from "utils.h"
     serialer->initialize(debug);
     serialer_thread->start();
     //---------------------------------
