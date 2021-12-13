@@ -16,10 +16,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::newRFExplorer(RFExplorer* device)
 {
-    qDebug() << "New device detected!! ";
-    connect(device, SIGNAL(new_config(int,int,int)), this, SLOT(on_newRf1Config(int,int,int)), Qt::DirectConnection);
+    //Signals from RFExplorer
+    connect(device, SIGNAL(new_config(int,int,int, int)), this, SLOT(on_newRf1Config(int,int,int,int)), Qt::DirectConnection);
     connect(device, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), this, SLOT(on_newRf1SweepData(QVector<float>,QVector<double>)), Qt::DirectConnection);
+    connect(device, SIGNAL(active_detections(QVector<Detection>)),this, SLOT(on_newRf1Detections(QVector<Detection>)), Qt::DirectConnection);
 
+    //Signals from UI
+    connect(this, SIGNAL(newRf1Threshold(int)),device, SLOT(edit_threshold(int)));
+    connect(this, SIGNAL(newRf1Frequency(double,double)), device, SLOT(send_config(double,double)));
 }
 
 
@@ -116,20 +120,23 @@ void MainWindow::resetPlots()
 
 
 
-void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size)
+void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold)
 {
     int bw = sweep_steps * step_size;
     int end_freq = start_freq + (bw/1000);
 
+
     m_rf1_start_freq = start_freq/1000;
     m_rf1_end_freq = end_freq/1000;
+    m_rf1_threshold = threshold;
 
     //Update UI visible data
     m_ui->lbl_rf1_freq_min->setText(QString::number(m_rf1_start_freq));
     m_ui->lbl_rf1_freq_max->setText(QString::number(m_rf1_end_freq));
+    m_ui->vslider_rf1->setValue(m_rf1_threshold);
 
     //Update Graph params
-    updateRf1Threshold(m_ui->vslider_rf1->value());
+    updateRf1Threshold(m_rf1_threshold);
 
     //m_ui->rfPlot1->rescaleAxes();
     //m_ui->rfPlot1->replot();
@@ -152,6 +159,13 @@ void MainWindow::on_newRf1SweepData(QVector<float> powerVector, QVector<double> 
     //m_ui->rfPlot1->rescaleAxes();
     m_ui->rfPlot1->replot();
 
+
+}
+
+void MainWindow::on_newRf1Detections(QVector<Detection> detections)
+{
+    qDebug()<<"HEY THERE";
+    m_ui->lbl_rf1_detections->setText(QString::number(detections.size()));
 
 }
 
@@ -219,36 +233,36 @@ void MainWindow::updateRf1Threshold(int value)
 
 void MainWindow::on_btn_rf1_24_clicked()
 {
-    double startFreq = 2400000;
-    double endFreq = 2500000;
+    double startFreq = 2400000000;
+    double endFreq = 2500000000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_51_clicked()
 {
-    double startFreq = 5100000;
-    double endFreq = 5200000;
+    double startFreq = 5100000000;
+    double endFreq = 5200000000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_58_clicked()
 {
-    double startFreq = 5800000;
-    double endFreq = 5900000;
+    double startFreq = 5800000000;
+    double endFreq = 5900000000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_900_clicked()
 {
-    double startFreq = 800000;
-    double endFreq = 900000;
+    double startFreq = 800000000;
+    double endFreq = 900000000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_433_clicked()
 {
-    double startFreq = 430000;
-    double endFreq = 440000;
+    double startFreq = 430000000;
+    double endFreq = 440000000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 

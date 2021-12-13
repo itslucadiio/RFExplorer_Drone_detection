@@ -114,7 +114,7 @@ void RFExplorer::read_data()
                 setEnd_Freq(getStart_Freq()+((getSweep_Steps()* getFreq_step())/1000));
 
                 //emit signal with config
-                emit new_config(getStart_Freq(), getSweep_Steps(), getFreq_step());
+                emit new_config(getStart_Freq(), getSweep_Steps(), getFreq_step(), getThreshold());
                 if (m_debug) emit log(QString("[serialManager.read_data] New Config received."));
 
             }

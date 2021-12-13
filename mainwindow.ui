@@ -211,6 +211,19 @@ color: rgb(227, 176, 31);</string>
                <string>FIN:</string>
               </property>
              </widget>
+             <widget class="QLabel" name="lbl_rf1_detections">
+              <property name="geometry">
+               <rect>
+                <x>540</x>
+                <y>10</y>
+                <width>62</width>
+                <height>17</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>0</string>
+              </property>
+             </widget>
             </widget>
            </item>
           </layout>

@@ -7,6 +7,8 @@
 #include <QThread>
 #include "utils.h"
 
+
+
 class RFExplorer : public QObject
 {
     Q_OBJECT
@@ -68,7 +70,7 @@ public:
 
 signals:
     void log(const QString& text); // Write message to log
-    void new_config(int start_freq, int sweep_steps, int step_size);
+    void new_config(int start_freq, int sweep_steps, int step_size, int threshold);
     void new_serial(QString serial);
     void powers_freqs(QVector<float> powerVector, QVector<double> freqsVector);
     void active_detections(QVector<Detection> detections);
@@ -94,7 +96,7 @@ private:
 
     QVector<Detection> detections;
 
-    int threshold = 0;
+    int threshold = -40;
 
     int Start_Freq = 0;
     int End_Freq = 0;

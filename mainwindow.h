@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "rfexplorer.h"
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -33,8 +34,9 @@ public slots:
     void newRFExplorer(RFExplorer* device);
 
 protected slots:
-    void on_newRf1Config(int start_freq, int sweep_steps, int step_size);
+    void on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold);
     void on_newRf1SweepData(QVector<float> powerVector, QVector<double> freqsVector);
+    void on_newRf1Detections(QVector<Detection> detections);
 
 private slots:
 
