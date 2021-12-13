@@ -32,21 +32,27 @@ void serialManager::startConnection(){
                 newSerial->setBaudRate(500000);
 
                 RFExplorer* rf_device = new RFExplorer();
+
                 rf_device->initialize(newSerial, m_debug);
                 m_devices.append(rf_device);
+
+                //Serial
                 rf.append(newSerial);
 
-                qDebug() << (newSerial->open(QIODevice::ReadWrite) ? "True" : "False");
-                connect(newSerial, SIGNAL(readyRead()), rf_device, SLOT(read_data()), Qt::DirectConnection);
-                connect(this, SIGNAL(send_data(QByteArray)), rf_device, SLOT(send_data(QByteArray)), Qt::DirectConnection);
+                //qDebug() << (newSerial->open(QIODevice::ReadWrite) ? "True" : "False");
+                //connect(newSerial, SIGNAL(readyRead()), rf_device, SLOT(read_data()), Qt::DirectConnection);
+                //connect(this, SIGNAL(send_data(QByteArray)), rf_device, SLOT(send_data(QByteArray)), Qt::DirectConnection);
                 connect(rf_device, SIGNAL(log(QString)), this, SIGNAL(log(QString)), Qt::DirectConnection);
 
-                connect(this, SIGNAL(send_config(double,double)), rf_device, SLOT(send_config(double,double)), Qt::DirectConnection);
-                connect(this, SIGNAL(edit_threhold(int)), rf_device, SLOT(edit_threshold(int)), Qt::DirectConnection);
-                connect(rf_device, SIGNAL(new_config(double,double)), this, SIGNAL(new_config(double,double)), Qt::DirectConnection);
-                connect(rf_device, SIGNAL(new_serial(QString)), this, SIGNAL(new_serial(QString)), Qt::DirectConnection);
-                connect(rf_device, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), this, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), Qt::DirectConnection);
-                connect(rf_device, SIGNAL(active_detections(QVector<Detection>)), this, SIGNAL(active_detections(QVector<Detection>)), Qt::DirectConnection);
+                //connect(this, SIGNAL(send_config(double,double)), rf_device, SLOT(send_config(double,double)), Qt::DirectConnection);
+                //connect(this, SIGNAL(edit_threhold(int)), rf_device, SLOT(edit_threshold(int)), Qt::DirectConnection);
+
+                //connect(rf_device, SIGNAL(new_config(double,double)), this, SIGNAL(new_config(double,double)), Qt::DirectConnection);
+                //connect(rf_device, SIGNAL(new_serial(QString)), this, SIGNAL(new_serial(QString)), Qt::DirectConnection);
+                //connect(rf_device, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), this, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), Qt::DirectConnection);
+                //connect(rf_device, SIGNAL(active_detections(QVector<Detection>)), this, SIGNAL(active_detections(QVector<Detection>)), Qt::DirectConnection);
+
+                emit newRFExplorer(rf_device);
 
                 if (m_debug) emit log(QString("[serialManager.startConnection] New RF connected at port %1!").arg(QString(serialName)));
             }

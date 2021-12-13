@@ -1,5 +1,5 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
+//#include <QGuiApplication>
+//#include <QQmlApplicationEngine>
 #include <QThread>
 #include <QDateTime>
 #include <QCommandLineParser>
@@ -7,9 +7,10 @@
 #include <QLockFile>
 #include <QDateTime>
 #include <QFile>
+#include <QApplication>
 
 #include "manager.h"
-
+#include "mainwindow.h"
 
 bool m_debug;
 QVariantMap* parameters;
@@ -30,9 +31,10 @@ QString logfile_path = "/var/log/asdt/s-link-rf.log";
 //-----------------------------------------------------------------------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication a(argc, argv);
+    //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
+    //QGuiApplication app(argc, argv);
 
     //If detected debug compilation, we set also debug mode output
     #ifdef QT_DEBUG
@@ -42,15 +44,21 @@ int main(int argc, char *argv[])
     // Configuration management
     parameters = new QVariantMap;
 
+    //MainWindow w;
+    //w.show();
+
 //    //Load parameters from ini file
 //    loadParameters(parameters);
 
     //Initialize
     initialize(parameters, m_debug);
 
-    //Start RF Explorer
-    super->start_rf();
 
+
+    //Start RF Explorer
+    //super = new manager();
+    //super->start_rf();
+/*
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
@@ -59,8 +67,11 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+*/
 
-    return app.exec();
+
+
+    return a.exec();
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 void deinitialize()
@@ -77,6 +88,7 @@ void initialize(QVariantMap* parameters, bool debug)
     QObject::connect(super, &manager::log, writeToLog);
     super_manager->start();
     super->initialize(parameters, debug);
+
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 

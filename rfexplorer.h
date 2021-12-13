@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSerialPort>
 #include <QDebug>
+#include <QThread>
 #include "utils.h"
 
 class RFExplorer : public QObject
@@ -16,6 +17,9 @@ public:
 
     int getStart_Freq() const;
     void setStart_Freq(int value);
+
+    int getEnd_Freq() const;
+    void setEnd_Freq(int value);
 
     int getFreq_step() const;
     void setFreq_step(int value);
@@ -59,9 +63,12 @@ public:
     int getThreshold() const;
     void setThreshold(int value);
 
+    void sendCommand(QString msg);
+
+
 signals:
     void log(const QString& text); // Write message to log
-    void new_config(double start_freq, double end_freq);
+    void new_config(int start_freq, int sweep_steps, int step_size);
     void new_serial(QString serial);
     void powers_freqs(QVector<float> powerVector, QVector<double> freqsVector);
     void active_detections(QVector<Detection> detections);
@@ -72,9 +79,15 @@ public slots:
     void send_config(double start_freq, double end_freq);
     void edit_threshold(int threshold);
 
+protected:
+    void startConnection();
+    void stopConnection();
+    void startSweeper(); //Starts RFExplorer sweep mode
+
 private:
 
     QSerialPort* serial_port;
+    bool m_connected;
 
     QString port_name = "";
     QString serial_number = "";
@@ -84,6 +97,7 @@ private:
     int threshold = 0;
 
     int Start_Freq = 0;
+    int End_Freq = 0;
     int Freq_step = 0;
     int Amp_Top = 0;
     int Amp_Bottom = 0;

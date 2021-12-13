@@ -1,6 +1,6 @@
 #include "rfexplorer.h"
 
-RFExplorer::RFExplorer(QObject *parent) : QObject(parent)
+RFExplorer::RFExplorer(QObject *parent)
 {
 
 }
@@ -11,11 +11,250 @@ void RFExplorer::initialize(QSerialPort* port, bool debug)
 {
     serial_port = port;
     m_debug = debug;
+    startConnection();
+
+
+
+}
+
+void RFExplorer::startConnection()
+{
+    m_connected = serial_port->open(QIODevice::ReadWrite);
+    if(m_connected)
+    {
+        connect(serial_port, SIGNAL(readyRead()), this, SLOT(read_data()), Qt::DirectConnection);
+        //connect(serial_port, SIGNAL(aboutToClose()), this, SLOT(read_data()), Qt::DirectConnection);
+        sendCommand("r");          //Reset
+        QThread::sleep(10);
+        sendCommand("C0");         //Request config datas
+    }
+}
+
+void RFExplorer::stopConnection()
+{
+    serial_port->disconnect();
+
+    if (m_connected)
+    {
+            serial_port->close();
+    }
+
+}
+
+void RFExplorer::startSweeper()
+{
+        sendCommand("r");          //Reset
+        QThread::sleep(10);
+        sendCommand("C0");         //Request config datas
+        QThread::sleep(100);
+        sendCommand("CH");         //Stop spectrum analizer data dump
+
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
+void RFExplorer::sendCommand(QString msg)
+{
+    QString array;
+    array.append("#");
+    array.append(char(msg.length() + 2));
+    array.append(msg);
+    QByteArray data = array.toUtf8();
+
+    send_data(data);
+}
+
+void RFExplorer::send_data(QByteArray data)
+{
+    if (serial_port->isOpen())
+    {
+        serial_port->write(data);
+        serial_port->waitForBytesWritten(500);
+        if (m_debug) emit log(QString("[serialManager.send_data] Data sent!"));
+    }
+}
+
+void RFExplorer::read_data()
+{
+    while(serial_port->canReadLine()){
+        const QByteArray data = serial_port->readLine();
+
+        QString stringData = QString(data);
+
+        if (stringData.contains("(C) Ariel Rocholl"))
+        {
+            if (m_debug) emit log(QString("[serialManager] RF authenticated! Hi Ariel Rocholl."));
+        }
+
+        //Configuration params
+        if (stringData.contains("#C2-F:"))
+        {
+            QVector<QString> setupFields = {"Start_Freq", "Freq_step", "Amp_Top", "Amp_Bottom", "Sweep_Steps", "Excp_Module_Active", "Current_Mode", "Min_Freq", "Max_Freq", "Max_Span", "Rbw", "dB_Offset", "Undoccumented"};
+            QVector<QString> modeFields = {"Spectrum Analizer", "RF Generator", "Wifi Analizer", "Unknown"};
+            QString dataString = stringData.split(":")[1];
+            QStringList configList = dataString.split(",");
+            qDebug() << "CONFIG: " << dataString;
+            if (configList.length() != setupFields.length())
+                if (m_debug) emit log(QString("[serialManager.read_data] Received unexpectd number of config values."));
+
+            try
+            {
+                setStart_Freq(configList[0].toInt());
+                setFreq_step(configList[1].toInt());
+                setAmp_Top(configList[2].toInt());
+                setAmp_Bottom(configList[3].toInt());
+                setThreshold(abs((getAmp_Top()-getAmp_Bottom())/2)+getAmp_Bottom());
+                setSweep_Steps(configList[4].toInt());
+                setExcp_Module_Active(configList[5].toInt());
+                setCurrent_Mode(modeFields[configList[6].toInt()]);
+                setMin_Freq(configList[7].toInt());
+                setMax_Freq(configList[8].toInt());
+                setMax_Span(configList[9].toInt());
+                setRbw(configList[10].toInt());
+                setDB_Offset(configList[11].toInt());
+                setUndoccumented(configList[12].trimmed().toInt());
+                setEnd_Freq(getStart_Freq()+((getSweep_Steps()* getFreq_step())/1000));
+
+                //emit signal with config
+                emit new_config(getStart_Freq(), getSweep_Steps(), getFreq_step());
+                if (m_debug) emit log(QString("[serialManager.read_data] New Config received."));
+
+            }
+            catch (...) {
+                if (m_debug) emit log(QString("[serialManager.read_data] Some error occurred."));
+            }
+        }
+
+        //Serial number
+        if (stringData.contains("#Sn"))
+        {
+            setSerial_number(stringData.split("Sn")[1].trimmed());
+            //emit signal with config
+            emit new_serial(getSerial_number());
+        }
+
+        //Data
+        if (stringData.contains("$S"))
+        {
+            QByteArray hexData = data.toHex();
+            QByteArray checkedData;
+            for (int i = 0; i < hexData.length(); ++i)
+            {
+                if( (i > 5) && (i < (hexData.length() - 4)))
+                    checkedData = checkedData + hexData[i];
+            }
+            //qDebug() << checkedData;
+
+            double sweep_start = this->getStart_Freq()/1e3;
+            double sweep_step = this->getFreq_step()/1e6;
+            //double sweep_end = sweep_start + (sweep_step * this->getSweep_Steps() * 0.999999);
+            //double slope = abs((this->getAmp_Bottom() - this->getAmp_Top()))/255.0;
+
+            QVector<float> powerVector;
+            QVector<double> freqsVector;
+            QVector<int> thresholdCounter;
+            QVector<float> highPower;
+            for (int i = 0; i < checkedData.length(); i = i + 2)
+            {
+                QByteArray pairData;
+                bool valid;
+                pairData.append(checkedData[i]);
+                pairData.append(checkedData[i+1]);
+                int decValue = pairData.toInt(&valid,16);
+                //double powerValue = this->getAmp_Bottom() + (slope * decValue);
+                float powerValue = -(decValue/2.0);
+                powerVector.append(powerValue);
+
+                //Detection of high signals (above threshold)
+                if (powerValue >= this->getThreshold()){  //Look for db above threshold
+                    thresholdCounter.append(i);
+                    highPower.append(powerValue);
+                }
+            }
+
+            double frequency = sweep_start - sweep_step;
+            QVector<double> highFreq; //Vector de frequencies que han saltat
+            for (int i = 0; i < this->getSweep_Steps(); ++i)
+            {
+                frequency = frequency + sweep_step;
+                freqsVector.append(frequency);
+
+                //Detection of high signals (above threshold)
+                if (thresholdCounter.contains(i))    //Look for corresponding frequency position
+                    highFreq.append(frequency);
+            }
+
+            for (int j = 0; j < highFreq.length(); ++j) {
+                bool encontrado = false;
+                if(detections.length() == 0)
+                {
+                    detections.append({highFreq[j], highPower[j], 0});
+                }
+                else
+                {
+                    for (int i = 0; i < detections.length(); ++i) {
+                        if(detections[i].freq == highFreq[j])
+                            encontrado = true;
+                    }
+                    if(!encontrado)
+                        detections.append({highFreq[j],highPower[j],0});
+                }
+            }
+
+            qDebug() << "###################################################################################################";
+            for (int i = 0; i < detections.length(); ++i) {
+                qDebug() << "ANALYSING THE VALUE: " << detections[i].freq << "WITH : "<< detections[i].power << " dBm WITH DETECTIONS: " << detections[i].counter;
+                if(highFreq.contains(detections[i].freq))
+                {
+                    detections[i].counter++;
+                }
+                else
+                {
+                    if(detections[i].counter > 2)
+                    {
+                        detections[i].counter = detections[i].counter / 2;
+                    }
+                    else
+                    {
+                        detections.remove(i);
+                    }
+                }
+            }
+            //emit signal with powerVector and freqsVector
+            emit powers_freqs(powerVector, freqsVector);
+            //emit signal with detections Vector(struct)
+            emit active_detections(detections);
+
+        }
+    }
+}
+
+void RFExplorer::send_config(double start_freq, double end_freq)
+{
+    //Change config request of RF Explorer device
+    QString data;
+    data.append("C2-F:");
+    data.append(QString::number(start_freq));
+    data.append(",");
+    data.append(QString::number(end_freq));
+    data.append(",");
+    data.append(QString(getAmp_Top()));
+    data.append(",");
+    data.append(QString(getAmp_Bottom()));
+
+    QByteArray byteData = data.toUtf8();
+    send_data(byteData);
+}
+
+void RFExplorer::edit_threshold(int threshold)
+{
+    setThreshold(threshold);
+}
 
 
-//GETTERS AND SETTERS ------------------------------------------------------------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------------------------------------------------------------
+//GETTERS AND SETTERS
+//------------------------------------------------------------------------------------------------------------------------------------
 int RFExplorer::getUndoccumented() const
 {
     return Undoccumented;
@@ -146,6 +385,15 @@ void RFExplorer::setStart_Freq(int value)
     Start_Freq = value;
 }
 
+int RFExplorer::getEnd_Freq() const
+{
+    return End_Freq;
+}
+
+void RFExplorer::setEnd_Freq(int value)
+{
+    End_Freq = value;
+}
 int RFExplorer::getThreshold() const
 {
     return threshold;
@@ -168,188 +416,5 @@ void RFExplorer::setSerial_number(const QString &value)
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
-void RFExplorer::send_data(QByteArray data)
-{
-    if (serial_port->isOpen())
-    {
-        serial_port->write(data);
-        serial_port->waitForBytesWritten(500);
-        if (m_debug) emit log(QString("[serialManager.send_data] Data sent!"));
-    }
-}
 
-void RFExplorer::read_data()
-{
-    while(serial_port->canReadLine()){
-        const QByteArray data = serial_port->readLine();
-
-        QString stringData = QString(data);
-
-        if (stringData.contains("(C) Ariel Rocholl"))
-        {
-            if (m_debug) emit log(QString("[serialManager] RF authenticated! Hi Ariel Rocholl."));
-        }
-
-        //Configuration params
-        if (stringData.contains("#C2-F:"))
-        {
-            QVector<QString> setupFields = {"Start_Freq", "Freq_step", "Amp_Top", "Amp_Bottom", "Sweep_Steps", "Excp_Module_Active", "Current_Mode", "Min_Freq", "Max_Freq", "Max_Span", "Rbw", "dB_Offset", "Undoccumented"};
-            QVector<QString> modeFields = {"Spectrum Analizer", "RF Generator", "Wifi Analizer", "Unknown"};
-            QString dataString = stringData.split(":")[1];
-            QStringList configList = dataString.split(",");
-            qDebug() << "CONFIG: " << dataString;
-            if (configList.length() != setupFields.length())
-                if (m_debug) emit log(QString("[serialManager.read_data] Received unexpectd number of config values."));
-
-            try
-            {
-                setStart_Freq(configList[0].toInt());
-                setFreq_step(configList[1].toInt());
-                setAmp_Top(configList[2].toInt());
-                setAmp_Bottom(configList[3].toInt());
-                setThreshold(abs((getAmp_Top()-getAmp_Bottom())/2)+getAmp_Bottom());
-                setSweep_Steps(configList[4].toInt());
-                setExcp_Module_Active(configList[5].toInt());
-                setCurrent_Mode(modeFields[configList[6].toInt()]);
-                setMin_Freq(configList[7].toInt());
-                setMax_Freq(configList[8].toInt());
-                setMax_Span(configList[9].toInt());
-                setRbw(configList[10].toInt());
-                setDB_Offset(configList[11].toInt());
-                setUndoccumented(configList[12].trimmed().toInt());
-                //emit signal with config
-                emit new_config(getStart_Freq(), getMax_Freq());
-            }
-            catch (...) {
-                if (m_debug) emit log(QString("[serialManager.read_data] Some error occurred."));
-            }
-        }
-
-        //Serial number
-        if (stringData.contains("#Sn"))
-        {
-            setSerial_number(stringData.split("Sn")[1].trimmed());
-            //emit signal with config
-            emit new_serial(getSerial_number());
-        }
-
-        //Data
-        if (stringData.contains("$S"))
-        {
-            QByteArray hexData = data.toHex();
-            QByteArray checkedData;
-            for (int i = 0; i < hexData.length(); ++i)
-            {
-                if( (i > 5) && (i < (hexData.length() - 4)))
-                    checkedData = checkedData + hexData[i];
-            }
-            //qDebug() << checkedData;
-
-            double sweep_start = this->getStart_Freq()/1e3;
-            double sweep_step = this->getFreq_step()/1e6;
-            //double sweep_end = sweep_start + (sweep_step * this->getSweep_Steps() * 0.999999);
-            //double slope = abs((this->getAmp_Bottom() - this->getAmp_Top()))/255.0;
-
-            QVector<float> powerVector;
-            QVector<double> freqsVector;
-            QVector<int> thresholdCounter;
-            QVector<float> highPower;
-            for (int i = 0; i < checkedData.length(); i = i + 2)
-            {
-                QByteArray pairData;
-                bool valid;
-                pairData.append(checkedData[i]);
-                pairData.append(checkedData[i+1]);
-                int decValue = pairData.toInt(&valid,16);
-                //double powerValue = this->getAmp_Bottom() + (slope * decValue);
-                float powerValue = -(decValue/2.0);
-                powerVector.append(powerValue);
-
-                //Detection of high signals (above threshold)
-                if (powerValue >= this->getThreshold()){  //Look for db above threshold
-                    thresholdCounter.append(i);
-                    highPower.append(powerValue);
-                }
-            }
-
-            double frequency = sweep_start - sweep_step;
-            QVector<double> highFreq; //Vector de frequencies que han saltat
-            for (int i = 0; i < this->getSweep_Steps(); ++i)
-            {
-                frequency = frequency + sweep_step;
-                freqsVector.append(frequency);
-
-                //Detection of high signals (above threshold)
-                if (thresholdCounter.contains(i))    //Look for corresponding frequency position
-                    highFreq.append(frequency);
-            }
-
-            for (int j = 0; j < highFreq.length(); ++j) {
-                bool encontrado = false;
-                if(detections.length() == 0)
-                {
-                    detections.append({highFreq[j], highPower[j], 0});
-                }
-                else
-                {
-                    for (int i = 0; i < detections.length(); ++i) {
-                        if(detections[i].freq == highFreq[j])
-                            encontrado = true;
-                    }
-                    if(!encontrado)
-                        detections.append({highFreq[j],highPower[j],0});
-                }
-            }
-
-            qDebug() << "###################################################################################################";
-            for (int i = 0; i < detections.length(); ++i) { 
-                qDebug() << "ANALYSING THE VALUE: " << detections[i].freq << "WITH : "<< detections[i].power << " dBm WITH DETECTIONS: " << detections[i].counter;
-                if(highFreq.contains(detections[i].freq))
-                {
-                    detections[i].counter++;
-                }
-                else
-                {
-                    if(detections[i].counter > 2)
-                    {
-                        detections[i].counter = detections[i].counter / 2;
-                    }
-                    else
-                    {
-                        detections.remove(i);
-                    }
-                }
-            }
-            //emit signal with powerVector and freqsVector
-            emit powers_freqs(powerVector, freqsVector);
-            //emit signal with detections Vector(struct)
-            emit active_detections(detections);
-
-        }
-    }
-}
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
-void RFExplorer::send_config(double start_freq, double end_freq)
-{
-    //Change config request of RF Explorer device
-    QString data;
-    data.append("C2-F:");
-    data.append(QString::number(start_freq));
-    data.append(",");
-    data.append(QString::number(end_freq));
-    data.append(",");
-    data.append(QString(getAmp_Top()));
-    data.append(",");
-    data.append(QString(getAmp_Bottom()));
-
-    QByteArray byteData = data.toUtf8();
-    send_data(byteData);
-}
-
-void RFExplorer::edit_threshold(int threshold)
-{
-    setThreshold(threshold);
-}
 //-------------------------------------------------------------------------------------------------------------------------------------------------------

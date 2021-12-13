@@ -36,6 +36,7 @@ class serialManager : public QObject
         void new_serial(QString serial);
         void powers_freqs(QVector<float> powerVector, QVector<double> freqsVector);
         void active_detections(QVector<Detection> detections);
+        void newRFExplorer(RFExplorer* rf_device);
 
     private:
         QVector<QSerialPort*> rf;

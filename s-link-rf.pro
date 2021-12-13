@@ -1,4 +1,4 @@
-QT += quick serialport
+QT += core gui widgets printsupport quick serialport
 
 CONFIG += c++11
 
@@ -8,7 +8,9 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
+        mainwindow.cpp \
         manager.cpp \
+        qcustomplot.cpp \
         rfexplorer.cpp \
         serialmanager.cpp \
         utils.cpp
@@ -27,7 +29,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    mainwindow.h \
     manager.h \
+    qcustomplot.h \
     rfexplorer.h \
     serialmanager.h \
     utils.h
+
+FORMS += \
+    mainwindow.ui
