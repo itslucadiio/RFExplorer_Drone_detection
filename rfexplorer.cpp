@@ -230,11 +230,31 @@ void RFExplorer::read_data()
 void RFExplorer::send_config(double start_freq, double end_freq)
 {
     //Change config request of RF Explorer device
+    QString _start_freq = QString::number(start_freq,'f',0);
+    QString _end_freq = QString::number(end_freq,'f',0);
+
     QString data;
+    data.append("#");
+    data.append(char(0x20));
     data.append("C2-F:");
-    data.append(QString::number(start_freq));
+
+    if (_start_freq.length()<7)
+    {
+        int diff_0 = 7-_start_freq.length();
+        const QChar zero =QChar(48);
+        _start_freq.insert(0,&zero,diff_0);
+    }
+
+    if (_end_freq.length()<7)
+    {
+        int diff_0 = 7-_end_freq.length();
+        const QChar zero =QChar(48);
+        _end_freq.insert(0,&zero,diff_0);
+    }
+
+    data.append(_start_freq);
     data.append(",");
-    data.append(QString::number(end_freq));
+    data.append(_end_freq);
     data.append(",");
     data.append(QString(getAmp_Top()));
     data.append(",");

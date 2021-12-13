@@ -233,36 +233,36 @@ void MainWindow::updateRf1Threshold(int value)
 
 void MainWindow::on_btn_rf1_24_clicked()
 {
-    double startFreq = 2400000000;
-    double endFreq = 2500000000;
+    double startFreq = 2400000;
+    double endFreq = 2500000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_51_clicked()
 {
-    double startFreq = 5100000000;
-    double endFreq = 5200000000;
+    double startFreq = 5100000;
+    double endFreq = 5200000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_58_clicked()
 {
-    double startFreq = 5800000000;
-    double endFreq = 5900000000;
+    double startFreq = 5800000;
+    double endFreq = 5900000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_900_clicked()
 {
-    double startFreq = 800000000;
-    double endFreq = 900000000;
+    double startFreq = 800000;
+    double endFreq = 900000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_433_clicked()
 {
-    double startFreq = 430000000;
-    double endFreq = 440000000;
+    double startFreq = 430000;
+    double endFreq = 440000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
