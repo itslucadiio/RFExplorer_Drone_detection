@@ -72,12 +72,17 @@ public:
     QVector<double> getFreqsVector();
     QVector<Detection> getDetections();
 
+    QString getModel();
+    QString getExpModule();
+    QString getFwVer();
+
 signals:
     void log(const QString& text); // Write message to log
     void new_config(int start_freq, int sweep_steps, int step_size, int threshold);
     void new_serial(QString serial);
     void powers_freqs(QVector<float> powerVector, QVector<double> freqsVector);
     void active_detections(QVector<Detection> detections);
+    void new_module_info();
 
 public slots:
     void send_data(QByteArray data);
@@ -104,13 +109,18 @@ private:
 
     int threshold = -40;
 
+    QString m_model = "";
+    QString m_exp_module = "";
+    QString m_fw_version = "";
+
+
     int Start_Freq = 0;
     int End_Freq = 0;
     int Freq_step = 0;
     int Amp_Top = 0;
     int Amp_Bottom = 0;
     int Sweep_Steps = 0;
-    int Excp_Module_Active = 0;
+    int Excp_Module_Active = 0; //Normal module active
     QString Current_Mode = "";
     int Min_Freq = 0;
     int Max_Freq = 0;

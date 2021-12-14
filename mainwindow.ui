@@ -73,6 +73,9 @@ color: rgb(227, 176, 31);</string>
                <height>34</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(77, 77, 77);</string>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -82,7 +85,7 @@ color: rgb(227, 176, 31);</string>
              <widget class="QLabel" name="lbl_rf1_freq_min">
               <property name="geometry">
                <rect>
-                <x>80</x>
+                <x>90</x>
                 <y>10</y>
                 <width>111</width>
                 <height>19</height>
@@ -126,7 +129,7 @@ color: rgb(227, 176, 31);</string>
              <widget class="QLabel" name="label_11">
               <property name="geometry">
                <rect>
-                <x>220</x>
+                <x>180</x>
                 <y>10</y>
                 <width>51</width>
                 <height>19</height>
@@ -134,18 +137,18 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <pointsize>14</pointsize>
-                <bold>true</bold>
+                <pointsize>12</pointsize>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
-               <string>MHZ</string>
+               <string>Mhz</string>
               </property>
              </widget>
              <widget class="QLabel" name="label_9">
               <property name="geometry">
                <rect>
-                <x>400</x>
+                <x>410</x>
                 <y>10</y>
                 <width>51</width>
                 <height>19</height>
@@ -153,12 +156,12 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <pointsize>14</pointsize>
-                <bold>true</bold>
+                <pointsize>12</pointsize>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
-               <string>MHZ</string>
+               <string>Mhz</string>
               </property>
              </widget>
              <widget class="QLabel" name="label_10">
@@ -166,7 +169,7 @@ color: rgb(227, 176, 31);</string>
                <rect>
                 <x>10</x>
                 <y>10</y>
-                <width>61</width>
+                <width>81</width>
                 <height>19</height>
                </rect>
               </property>
@@ -204,9 +207,14 @@ color: rgb(227, 176, 31);</string>
                <rect>
                 <x>480</x>
                 <y>10</y>
-                <width>21</width>
+                <width>31</width>
                 <height>16</height>
                </rect>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>0</string>
@@ -275,6 +283,34 @@ color: rgb(227, 176, 31);</string>
            <property name="autoFillBackground">
             <bool>false</bool>
            </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(77, 77, 77);</string>
+           </property>
+           <widget class="QLabel" name="lbl_rf1_alert">
+            <property name="geometry">
+             <rect>
+              <x>60</x>
+              <y>10</y>
+              <width>551</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>29</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgba(255, 0, 0, 127);</string>
+            </property>
+            <property name="text">
+             <string>ALERTA</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -323,6 +359,7 @@ background-color: rgb(227, 176, 31);</string>
            <property name="font">
             <font>
              <pointsize>11</pointsize>
+             <bold>true</bold>
             </font>
            </property>
            <property name="text">
@@ -342,7 +379,7 @@ background-color: rgb(227, 176, 31);</string>
             <number>-100</number>
            </property>
            <property name="maximum">
-            <number>0</number>
+            <number>-20</number>
            </property>
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -379,7 +416,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>30</y>
+              <y>40</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -410,7 +447,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>30</y>
+              <y>40</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -432,7 +469,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>200</x>
-              <y>30</y>
+              <y>40</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -454,7 +491,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>60</y>
+              <y>80</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -485,7 +522,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>60</y>
+              <y>80</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -517,7 +554,7 @@ background-color: rgb(227, 176, 31);</string>
              <rect>
               <x>20</x>
               <y>140</y>
-              <width>121</width>
+              <width>131</width>
               <height>31</height>
              </rect>
             </property>
@@ -535,7 +572,7 @@ background-color: rgb(227, 176, 31);</string>
              <rect>
               <x>20</x>
               <y>180</y>
-              <width>111</width>
+              <width>131</width>
               <height>31</height>
              </rect>
             </property>
@@ -548,39 +585,10 @@ background-color: rgb(227, 176, 31);</string>
              <string>Frecuencia Final</string>
             </property>
            </widget>
-           <widget class="QDoubleSpinBox" name="ds_rf1_final_freq">
-            <property name="geometry">
-             <rect>
-              <x>170</x>
-              <y>180</y>
-              <width>111</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>13</pointsize>
-              <bold>false</bold>
-              <kerning>false</kerning>
-             </font>
-            </property>
-            <property name="decimals">
-             <number>3</number>
-            </property>
-            <property name="minimum">
-             <double>100.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>6000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>2400.000000000000000</double>
-            </property>
-           </widget>
            <widget class="QDoubleSpinBox" name="ds_rf1_ini_freq">
             <property name="geometry">
              <rect>
-              <x>170</x>
+              <x>160</x>
               <y>140</y>
               <width>111</width>
               <height>31</height>
@@ -597,10 +605,13 @@ background-color: rgb(227, 176, 31);</string>
              <number>3</number>
             </property>
             <property name="minimum">
-             <double>100.000000000000000</double>
+             <double>20.000000000000000</double>
             </property>
             <property name="maximum">
-             <double>6000.000000000000000</double>
+             <double>2600.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>5.000000000000000</double>
             </property>
             <property name="value">
              <double>2400.000000000000000</double>
@@ -628,6 +639,50 @@ background-color: rgb(227, 176, 31);</string>
              <string>Modificar</string>
             </property>
            </widget>
+           <widget class="QLabel" name="label_5">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>10</y>
+              <width>31</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>SN:</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_rf1_serialnumber">
+            <property name="geometry">
+             <rect>
+              <x>50</x>
+              <y>10</y>
+              <width>151</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>00000000000</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_rf1_end_freq">
+            <property name="geometry">
+             <rect>
+              <x>160</x>
+              <y>180</y>
+              <width>111</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>2500,000</string>
+            </property>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -643,12 +698,18 @@ background-color: rgb(77, 77, 77);
 color: rgb(227, 176, 31);</string>
       </property>
       <property name="title">
-       <string>GroupBox</string>
+       <string>RF2</string>
       </property>
       <property name="flat">
        <bool>true</bool>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <property name="leftMargin">
+        <number>1</number>
+       </property>
+       <property name="rightMargin">
+        <number>1</number>
+       </property>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
@@ -673,12 +734,12 @@ color: rgb(227, 176, 31);</string>
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <widget class="QLabel" name="label_19">
+             <widget class="QLabel" name="lbl_rf2_freq_min">
               <property name="geometry">
                <rect>
-                <x>80</x>
+                <x>90</x>
                 <y>10</y>
-                <width>71</width>
+                <width>81</width>
                 <height>19</height>
                </rect>
               </property>
@@ -698,13 +759,13 @@ color: rgb(227, 176, 31);</string>
                <string>00.000</string>
               </property>
              </widget>
-             <widget class="QLabel" name="label_20">
+             <widget class="QLabel" name="lbl_rf2_freq_max">
               <property name="geometry">
                <rect>
-                <x>240</x>
-                <y>10</y>
-                <width>71</width>
-                <height>20</height>
+                <x>310</x>
+                <y>9</y>
+                <width>91</width>
+                <height>21</height>
                </rect>
               </property>
               <property name="font">
@@ -720,7 +781,7 @@ color: rgb(227, 176, 31);</string>
              <widget class="QLabel" name="label_21">
               <property name="geometry">
                <rect>
-                <x>150</x>
+                <x>180</x>
                 <y>10</y>
                 <width>41</width>
                 <height>19</height>
@@ -728,31 +789,31 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <pointsize>14</pointsize>
-                <bold>true</bold>
+                <pointsize>12</pointsize>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
-               <string>MHZ</string>
+               <string>Mhz</string>
               </property>
              </widget>
              <widget class="QLabel" name="label_22">
               <property name="geometry">
                <rect>
-                <x>310</x>
+                <x>400</x>
                 <y>10</y>
-                <width>41</width>
+                <width>51</width>
                 <height>19</height>
                </rect>
               </property>
               <property name="font">
                <font>
-                <pointsize>14</pointsize>
-                <bold>true</bold>
+                <pointsize>12</pointsize>
+                <bold>false</bold>
                </font>
               </property>
               <property name="text">
-               <string>MHZ</string>
+               <string>Mhz</string>
               </property>
              </widget>
              <widget class="QLabel" name="label_23">
@@ -760,7 +821,7 @@ color: rgb(227, 176, 31);</string>
                <rect>
                 <x>10</x>
                 <y>10</y>
-                <width>61</width>
+                <width>81</width>
                 <height>19</height>
                </rect>
               </property>
@@ -777,9 +838,9 @@ color: rgb(227, 176, 31);</string>
              <widget class="QLabel" name="label_24">
               <property name="geometry">
                <rect>
-                <x>200</x>
+                <x>260</x>
                 <y>10</y>
-                <width>31</width>
+                <width>41</width>
                 <height>19</height>
                </rect>
               </property>
@@ -796,11 +857,16 @@ color: rgb(227, 176, 31);</string>
              <widget class="QLabel" name="lbl_rf2_detections">
               <property name="geometry">
                <rect>
-                <x>460</x>
+                <x>480</x>
                 <y>10</y>
-                <width>21</width>
+                <width>31</width>
                 <height>16</height>
                </rect>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>0</string>
@@ -809,7 +875,7 @@ color: rgb(227, 176, 31);</string>
              <widget class="QProgressBar" name="pb_rf2_meter">
               <property name="geometry">
                <rect>
-                <x>490</x>
+                <x>510</x>
                 <y>10</y>
                 <width>131</width>
                 <height>16</height>
@@ -869,6 +935,31 @@ color: rgb(227, 176, 31);</string>
            <property name="autoFillBackground">
             <bool>false</bool>
            </property>
+           <widget class="QLabel" name="lbl_rf2_alert">
+            <property name="geometry">
+             <rect>
+              <x>60</x>
+              <y>0</y>
+              <width>551</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>29</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgba(255, 0, 0, 127);</string>
+            </property>
+            <property name="text">
+             <string>ALERTA</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -914,6 +1005,12 @@ background-color: rgb(227, 176, 31);</string>
          </item>
          <item>
           <widget class="QLabel" name="lbl_rf2_db">
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
            <property name="text">
             <string>-0</string>
            </property>
@@ -921,6 +1018,12 @@ background-color: rgb(227, 176, 31);</string>
          </item>
          <item>
           <widget class="QSlider" name="vslider_rf2">
+           <property name="minimumSize">
+            <size>
+             <width>30</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="minimum">
             <number>-100</number>
            </property>
@@ -962,7 +1065,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>30</y>
+              <y>40</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -990,10 +1093,13 @@ background-color: rgb(227, 176, 31);</string>
             </property>
            </widget>
            <widget class="QPushButton" name="btn_rf2_51">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>30</y>
+              <y>40</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1015,7 +1121,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>200</x>
-              <y>30</y>
+              <y>40</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1037,7 +1143,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>60</y>
+              <y>80</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1068,7 +1174,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>60</y>
+              <y>80</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1100,7 +1206,7 @@ background-color: rgb(227, 176, 31);</string>
              <rect>
               <x>20</x>
               <y>140</y>
-              <width>121</width>
+              <width>141</width>
               <height>31</height>
              </rect>
             </property>
@@ -1118,7 +1224,7 @@ background-color: rgb(227, 176, 31);</string>
              <rect>
               <x>20</x>
               <y>180</y>
-              <width>111</width>
+              <width>131</width>
               <height>31</height>
              </rect>
             </property>
@@ -1129,35 +1235,6 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="text">
              <string>Frecuencia Final</string>
-            </property>
-           </widget>
-           <widget class="QDoubleSpinBox" name="ds_rf2_final_freq">
-            <property name="geometry">
-             <rect>
-              <x>170</x>
-              <y>180</y>
-              <width>111</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>13</pointsize>
-              <bold>false</bold>
-              <kerning>false</kerning>
-             </font>
-            </property>
-            <property name="decimals">
-             <number>3</number>
-            </property>
-            <property name="minimum">
-             <double>100.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>6000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>2400.000000000000000</double>
             </property>
            </widget>
            <widget class="QDoubleSpinBox" name="ds_rf2_ini_freq">
@@ -1180,10 +1257,13 @@ background-color: rgb(227, 176, 31);</string>
              <number>3</number>
             </property>
             <property name="minimum">
-             <double>100.000000000000000</double>
+             <double>20.000000000000000</double>
             </property>
             <property name="maximum">
-             <double>6000.000000000000000</double>
+             <double>2600.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>5.000000000000000</double>
             </property>
             <property name="value">
              <double>2400.000000000000000</double>
@@ -1209,6 +1289,50 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="text">
              <string>Modificar</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_6">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>10</y>
+              <width>31</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>SN:</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_rf1_serialnumber_2">
+            <property name="geometry">
+             <rect>
+              <x>50</x>
+              <y>10</y>
+              <width>151</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>00000000000</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="lbl_rf2_end_freq">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>180</y>
+              <width>101</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>2500,000</string>
             </property>
            </widget>
           </widget>

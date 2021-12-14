@@ -66,7 +66,20 @@ void RFExplorer::read_data()
         {
             if (m_debug) emit log(QString("[serialManager] RF authenticated! Hi Ariel Rocholl."));
         }
+        //Module info
+        if (stringData.contains("#C2-M:"))
+        {
+            QString dataString = stringData.split(":")[1];
+            QStringList modulelist = dataString.split(",");
+            m_model = modulelist[0];
+            m_exp_module = modulelist[1];
+            m_fw_version = modulelist[2];
 
+            emit new_module_info();
+
+
+            qDebug() << "MODULE: " << dataString;
+        }
         //Configuration params
         if (stringData.contains("#C2-F:"))
         {
@@ -216,13 +229,6 @@ void RFExplorer::read_data()
 
             m_detections = _detections; //Set new values (Hope not mutex needed)
 
-
-
-            //emit signal with m_powerVector and m_freqsVector
-            //emit powers_freqs(m_powerVector, m_freqsVector);
-            //emit signal with m_detections Vector(struct)
-            //emit active_detections(m_detections);
-
         }
     }
 }
@@ -255,6 +261,26 @@ void RFExplorer::send_config(double start_freq, double end_freq)
     QString _start_freq = QString::number(start_freq,'f',0);
     QString _end_freq = QString::number(end_freq,'f',0);
 
+    if((start_freq>4800000)&(start_freq<6000000)
+       &(m_model=="006")&(Excp_Module_Active==1))
+    {
+        QString switchCmd;
+        switchCmd.append("CM");
+        switchCmd.append(char(0x00));
+        sendCommand(switchCmd);
+        QThread::sleep(3);
+    }
+    if((start_freq>15000)&(start_freq<2700000)
+       &(Excp_Module_Active==0))
+    {
+        QString switchCmd;
+        switchCmd.append("CM");
+        switchCmd.append(char(0x01));
+        sendCommand(switchCmd);
+        QThread::sleep(3);
+    }
+
+
     QString data;
     //data.append("#");
     //data.append(char(0x20));
@@ -283,7 +309,7 @@ void RFExplorer::send_config(double start_freq, double end_freq)
     data.append(QString(getAmp_Bottom()));
     sendCommand(data);
 
-    QThread::sleep(2);
+    QThread::sleep(4);
     sendCommand("C0");
 
 
@@ -299,7 +325,7 @@ void RFExplorer::edit_threshold(int threshold)
 
 //------------------------------------------------------------------------------------------------------------------------------------
 //GETTERS AND SETTERS
-//------------------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------255--------------------------------------------------------
 
 QVector<float> RFExplorer::getPowerVector()
 {
@@ -316,6 +342,21 @@ QVector<Detection> RFExplorer::getDetections()
     return m_detections;
 }
 
+QString RFExplorer::getModel()
+{
+    return m_model;
+}
+
+
+QString RFExplorer::getExpModule()
+{
+    return m_exp_module;
+}
+
+QString RFExplorer::getFwVer()
+{
+    return m_fw_version;
+}
 
 int RFExplorer::getUndoccumented() const
 {

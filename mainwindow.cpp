@@ -8,6 +8,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     m_ui->setupUi(this);
     resetPlots();
 
+    m_ui->lbl_rf1_alert->setVisible(false);
+    m_ui->lbl_rf2_alert->setVisible(false);
+
     //Create plots update timer
     m_drawTimer = new QTimer(this);
     m_drawTimer->setInterval(1000.0 /10.0);
@@ -24,19 +27,49 @@ MainWindow::~MainWindow()
     delete m_ui;
 }
 
-void MainWindow::newRFExplorer(RFExplorer* device)
+void MainWindow::newRF1Explorer(RFExplorer* device)
 {
     m_rf1 = device;
     //Signals from RFExplorer
     connect(device, SIGNAL(new_config(int,int,int, int)), this, SLOT(on_newRf1Config(int,int,int,int)), Qt::DirectConnection);
-    //connect(device, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), this, SLOT(on_newRf1SweepData(QVector<float>,QVector<double>)), Qt::DirectConnection);
-    //connect(device, SIGNAL(active_detections(QVector<Detection>)),this, SLOT(on_newRf1Detections(QVector<Detection>)), Qt::DirectConnection);
 
     //Signals from UI
     connect(this, SIGNAL(newRf1Threshold(int)),device, SLOT(edit_threshold(int)));
     connect(this, SIGNAL(newRf1Frequency(double,double)), device, SLOT(send_config(double,double)));
 }
 
+void MainWindow::on_newRf1ModuleInfo()
+{
+
+}
+
+void MainWindow::newRF2Explorer(RFExplorer* device)
+{
+    m_rf2 = device;
+    //Signals from RFExplorer
+    connect(device, SIGNAL(new_config(int,int,int, int)), this, SLOT(on_newRf2Config(int,int,int,int)), Qt::DirectConnection);
+    connect(device, SIGNAL(new_module_info()), this, SLOT(on_newRf2ModuleInfo()), Qt::DirectConnection);
+
+    //Signals from UI
+    connect(this, SIGNAL(newRf2Threshold(int)),device, SLOT(edit_threshold(int)));
+    connect(this, SIGNAL(newRf2Frequency(double,double)), device, SLOT(send_config(double,double)));
+}
+
+void MainWindow::on_newRf2ModuleInfo()
+{
+    m_rf2_module_ext = m_rf2->getExpModule();
+    m_rf2_module = m_rf2->getModel();
+    m_rf2_fw_ver = m_rf2->getFwVer();
+
+    if(m_rf2_module!="006")
+    {
+        m_ui->btn_rf2_51->setVisible(false);
+        m_ui->btn_rf2_58->setVisible(false);
+    }else{
+        qDebug("RF2 is 006");
+    }
+
+}
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 void MainWindow::resetPlots()
@@ -73,8 +106,6 @@ void MainWindow::resetPlots()
     // Add detection threshold plot
     m_rf1ThresholdGraph = m_ui->rfPlot1->addGraph(spectrumAxisRect->axis(QCPAxis::atBottom), spectrumAxisRect->axis(QCPAxis::atLeft));
     m_rf1ThresholdGraph->setPen(QPen(Qt::red, 2.0, Qt::SolidLine));
-    //m_rf1ThresholdGraph->setAntialiased(true);
-
 
     // Update
     m_ui->rfPlot1->rescaleAxes();
@@ -110,7 +141,7 @@ void MainWindow::resetPlots()
 
     // Add current spectrum plot
     m_spectrumGraph2 = m_ui->rfPlot2->addGraph(spectrumAxisRect2->axis(QCPAxis::atBottom), spectrumAxisRect2->axis(QCPAxis::atLeft));
-    m_spectrumGraph2->setPen(QPen(Qt::red, 1.0));
+    m_spectrumGraph2->setPen(QPen(Qt::green, 1.0));
     m_spectrumGraph2->setAntialiased(true);
 
     // Add detection threshold plot
@@ -122,7 +153,8 @@ void MainWindow::resetPlots()
     m_ui->rfPlot2->rescaleAxes();
     m_ui->rfPlot2->replot();
 
-    m_ui->vslider_rf2->setValue(-60);
+    m_ui->vslider_rf2->setValue(m_rf2_threshold);
+    updateRf2Threshold(m_rf2_threshold);
 
     m_ui->rf1_sidebar->setVisible(false);
     m_ui->rf2_sidebar->setVisible(false);
@@ -175,13 +207,16 @@ void MainWindow::handleDrawTimerTick()
 
         //Setting progress bar color
         if(maxlevel < 6)
-        { m_ui->pb_rf1_meter->setStyleSheet(safe);}
+        { m_ui->pb_rf1_meter->setStyleSheet(safe);
+            m_ui->lbl_rf1_alert->setVisible(false);
+        }
         else
-        {m_ui->pb_rf1_meter->setStyleSheet(danger);}
+        {
+            m_ui->pb_rf1_meter->setStyleSheet(danger);
+            m_ui->lbl_rf1_alert->setVisible(true);
+        }
 
         m_ui->pb_rf1_meter->setValue(maxlevel);
-
-
 
 
         //Update PLOT1 Graphs
@@ -233,9 +268,15 @@ void MainWindow::handleDrawTimerTick()
 
         //Setting progress bar color
         if(maxlevel < 6)
-        { m_ui->pb_rf2_meter->setStyleSheet(safe);}
+        {
+            m_ui->pb_rf2_meter->setStyleSheet(safe);
+            m_ui->lbl_rf2_alert->setVisible(false);
+        }
         else
-        {m_ui->pb_rf2_meter->setStyleSheet(danger);}
+        {
+            m_ui->pb_rf2_meter->setStyleSheet(danger);
+            m_ui->lbl_rf2_alert->setVisible(true);
+        }
 
         m_ui->pb_rf2_meter->setValue(maxlevel);
 
@@ -271,76 +312,43 @@ void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size,
 
 }
 
-void MainWindow::on_newRf1SweepData(QVector<float> powerVector, QVector<double> freqsVector)
+void on_newRf1ModuleInfo()
 {
-    qDebug()<<"NEW SWEEP DATA";
-
-    int samplesCount = powerVector.size();
-    //Verify data coherence
-    if(powerVector.size() == freqsVector.size())
-    {
-        QVector<QCPGraphData> detectedSignalGraphData(samplesCount);
-        for (int n =0; n < samplesCount; n++)
-        {
-            detectedSignalGraphData[n].key =freqsVector[n];
-            detectedSignalGraphData[n].value =powerVector[n];
-        }
-        m_spectrumGraph1->data()->set(detectedSignalGraphData);
-        m_ui->rfPlot1->xAxis->setRange(freqsVector.first()-1,freqsVector.last()+1);
-        //m_ui->rfPlot1->rescaleAxes();
-        m_ui->rfPlot1->replot();
-    }
-
 
 }
 
-void MainWindow::on_newRf1Detections(QVector<Detection> detections)
+void on_newRf2ModuleInfo()
 {
-    qDebug()<<"HEY THERE";
-    m_ui->lbl_rf1_detections->setText(QString::number(detections.size()));
-    int level =0;
-    foreach (Detection det, detections)
-    {
-        int sublevel = det.counter;
-        if(sublevel>level)
-        {
-            level=sublevel;
-        }
-    }
-    if (level >10)
-    {
-        level=10;
-    }
-    m_ui->pb_rf1_meter->setValue(level);
 
 }
-
-void MainWindow::updateRf2Threshold(int value)
+void MainWindow::on_newRf2Config(int start_freq, int sweep_steps, int step_size, int threshold)
 {
-    int samplesCount = 100;
+    int bw = sweep_steps * step_size;
+    int end_freq = start_freq + (bw/1000);
 
-    QVector<QCPGraphData> thresholdLevelGraphData2(samplesCount);
-    for (int i = 0; i < samplesCount; i++)
-    {
-        thresholdLevelGraphData2[i].key = i ; //spectrumScale[i];
-        thresholdLevelGraphData2[i].value = value;
-    }
 
-    m_rf2ThresholdGraph->data()->set(thresholdLevelGraphData2);
+    m_rf2_start_freq = start_freq/1000;
+    m_rf2_end_freq = end_freq/1000;
+    m_rf2_threshold = threshold;
+
+    //Update UI visible data
+    m_ui->lbl_rf2_freq_min->setText(QString::number(m_rf2_start_freq));
+    m_ui->lbl_rf2_freq_max->setText(QString::number(m_rf2_end_freq));
+    m_ui->vslider_rf1->setValue(m_rf2_threshold);
+
+    //Update Graph params
+    updateRf2Threshold(m_rf2_threshold);
+
+    //m_ui->rfPlot1->rescaleAxes();
+    //m_ui->rfPlot1->replot();
 
 }
-
 
 // RF1 SIDEBAR CONTROLS
 //*************************************************************
 void MainWindow::on_vslider_rf1_valueChanged(int value)
 {
     m_ui->lbl_rf1_db->setText(QString::number(value));
-    //updateRf1Threshold(value);
-
-    // Update
-    //m_ui->rfPlot1->xAxis->rescale();
-    //m_ui->rfPlot1->replot();
 }
 
 
@@ -354,26 +362,13 @@ void MainWindow::on_vslider_rf1_sliderReleased()
 
 void MainWindow::updateRf1Threshold(int value)
 {
-
     m_rf1_threshold = value;
-    //int samplesCount = m_rf1_sweep_steps;
-    //QCPRange range = m_ui->rfPlot1->xAxis->range();
-    //int step_size = (range.maxRange -range.minRange)/m_rf1_sweep_steps;
-
-    /*QVector<QCPGraphData> thresholdLevelGraphData(samplesCount);
-    for (int i = 0; i < samplesCount; i++)
-    {
-        thresholdLevelGraphData[i].key = range.maxRange+(step_size*i); //spectrumScale[i];
-        thresholdLevelGraphData[i].value = m_rf1_threshold;
-    }
-    */
     QVector<QCPGraphData> thresholdLevelGraphData(2);
     thresholdLevelGraphData[0].key = m_rf1_start_freq;
     thresholdLevelGraphData[1].key = m_rf1_end_freq;
     thresholdLevelGraphData[0].value = m_rf1_threshold;
     thresholdLevelGraphData[1].value = m_rf1_threshold;
     m_rf1ThresholdGraph->data()->set(thresholdLevelGraphData);
-
 }
 
 
@@ -400,22 +395,22 @@ void MainWindow::on_btn_rf1_58_clicked()
 
 void MainWindow::on_btn_rf1_900_clicked()
 {
-    double startFreq = 800000;
-    double endFreq = 900000;
+    double startFreq = 850000;
+    double endFreq = 950000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_433_clicked()
 {
-    double startFreq = 430000;
-    double endFreq = 440000;
+    double startFreq = 400000;
+    double endFreq = 500000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf1_modify_clicked()
 {
     double startFreq = m_ui->ds_rf1_ini_freq->value()*1000;
-    double endFreq = m_ui->ds_rf1_final_freq->value()*1000;
+    double endFreq = m_ui->lbl_rf1_end_freq->text().toDouble()*1000;
     emit newRf1Frequency(startFreq,endFreq);
 }
 
@@ -430,58 +425,55 @@ void MainWindow::on_btn_rf1_sidebar_clicked()
      }
 }
 
-void MainWindow::on_ds_rf1_final_freq_valueChanged(double arg1)
-{
-    if (m_ui->ds_rf1_ini_freq->value()>arg1)
-    {
-        m_ui->ds_rf1_ini_freq->setValue(arg1);
-    }
-}
+
 
 void MainWindow::on_ds_rf1_ini_freq_valueChanged(double arg1)
 {
-    if (m_ui->ds_rf1_final_freq->value()<arg1)
+    m_ui->lbl_rf1_end_freq->setText(QString::number(arg1+100,'f',3));
+    /*
+     * if (m_ui->ds_rf1_final_freq->value()<arg1)
     {
         m_ui->ds_rf1_final_freq->setValue(arg1);
+
     }
+    */
 }
 
 
-/***********************************************************
-* RF2 Interface Controls
-*/
+// RF2 SIDEBAR CONTROLS
+//*************************************************************
 
 void MainWindow::on_vslider_rf2_valueChanged(int value)
 {
     m_ui->lbl_rf2_db->setText(QString::number(value));
-
-    updateRf2Threshold(value);
-    // Update
-    m_ui->rfPlot2->xAxis->rescale();
-    m_ui->rfPlot2->replot();
 }
 
 void MainWindow::on_vslider_rf2_sliderReleased()
 {
     int value = m_ui->vslider_rf2->value();
+    updateRf2Threshold(value);
     emit newRf2Threshold(value);
+}
+
+void MainWindow::updateRf2Threshold(int value)
+{
+    m_rf2_threshold = value;
+    QVector<QCPGraphData> thresholdLevelGraphData(2);
+    thresholdLevelGraphData[0].key = m_rf2_start_freq;
+    thresholdLevelGraphData[1].key = m_rf2_end_freq;
+    thresholdLevelGraphData[0].value = m_rf2_threshold;
+    thresholdLevelGraphData[1].value = m_rf2_threshold;
+    m_rf2ThresholdGraph->data()->set(thresholdLevelGraphData);
+
 }
 
 void MainWindow::on_ds_rf2_ini_freq_valueChanged(double arg1)
 {
-    if (m_ui->ds_rf2_final_freq->value()<arg1)
-    {
-        m_ui->ds_rf2_final_freq->setValue(arg1);
-    }
+
+        m_ui->lbl_rf2_end_freq->setText(QString::number(arg1+100,'f',3));
 }
 
-void MainWindow::on_ds_rf2_final_freq_valueChanged(double arg1)
-{
-    if (m_ui->ds_rf2_ini_freq->value()>arg1)
-    {
-        m_ui->ds_rf2_ini_freq->setValue(arg1);
-    }
-}
+
 
 void MainWindow::on_btn_rf2_sidebar_clicked()
 {
@@ -517,22 +509,22 @@ void MainWindow::on_btn_rf2_58_clicked()
 
 void MainWindow::on_btn_rf2_900_clicked()
 {
-    double startFreq = 800000;
-    double endFreq = 900000;
+    double startFreq = 850000;
+    double endFreq = 950000;
     emit newRf2Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf2_433_clicked()
 {
-    double startFreq = 430000;
-    double endFreq = 440000;
+    double startFreq = 400000;
+    double endFreq = 500000;
     emit newRf2Frequency(startFreq,endFreq);
 }
 
 void MainWindow::on_btn_rf2_modify_clicked()
 {
     double startFreq = m_ui->ds_rf2_ini_freq->value()*1000;
-    double endFreq = m_ui->ds_rf2_final_freq->value()*1000;
+    double endFreq = m_ui->lbl_rf2_end_freq->text().toDouble()*1000;
     emit newRf2Frequency(startFreq,endFreq);
 }
 

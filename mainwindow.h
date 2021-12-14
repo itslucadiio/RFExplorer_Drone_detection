@@ -31,74 +31,67 @@ public slots:
 
     // Reset all plots
     void resetPlots();
-    void newRFExplorer(RFExplorer* device);
+    void newRF1Explorer(RFExplorer* device);
+    void newRF2Explorer(RFExplorer* device);
     void handleDrawTimerTick();
 
 
 protected slots:
     void on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold);
-    void on_newRf1SweepData(QVector<float> powerVector, QVector<double> freqsVector);
-    void on_newRf1Detections(QVector<Detection> detections);
+    void on_newRf1ModuleInfo();
+    void on_newRf2Config(int start_freq, int sweep_steps, int step_size, int threshold);
+    void on_newRf2ModuleInfo();
 
 private slots:
 
-    void on_vslider_rf1_valueChanged(int value);
-    void on_vslider_rf2_valueChanged(int value);
-
-    void on_vslider_rf1_sliderReleased();
-    void on_vslider_rf2_sliderReleased();
-
-    void on_btn_rf1_58_clicked();
-
-    void on_btn_rf1_24_clicked();
-
     void on_btn_rf1_sidebar_clicked();
 
-    void on_ds_rf1_final_freq_valueChanged(double arg1);
-
     void on_ds_rf1_ini_freq_valueChanged(double arg1);
-
-    void on_ds_rf2_ini_freq_valueChanged(double arg1);
-
-    void on_ds_rf2_final_freq_valueChanged(double arg1);
+    void on_btn_rf1_51_clicked();
+    void on_btn_rf1_58_clicked();
+    void on_btn_rf1_24_clicked();
+    void on_btn_rf1_900_clicked();
+    void on_btn_rf1_433_clicked();
+    void on_btn_rf1_modify_clicked();
+    void on_vslider_rf1_sliderReleased();
+    void on_vslider_rf1_valueChanged(int value);
 
     void on_btn_rf2_sidebar_clicked();
-
+    void on_ds_rf2_ini_freq_valueChanged(double arg1);
     void on_btn_rf2_58_clicked();
-
     void on_btn_rf2_51_clicked();
-
     void on_btn_rf2_24_clicked();
-
     void on_btn_rf2_900_clicked();
-
     void on_btn_rf2_433_clicked();
-
     void on_btn_rf2_modify_clicked();
-
-    void on_btn_rf1_51_clicked();
-
-    void on_btn_rf1_900_clicked();
-
-    void on_btn_rf1_433_clicked();
-
-    void on_btn_rf1_modify_clicked();
+    void on_vslider_rf2_sliderReleased();
+    void on_vslider_rf2_valueChanged(int value);
 
 private:
     Ui::MainWindow *m_ui;
     QTimer* m_drawTimer;
 
-    RFExplorer* m_rf1;
-    RFExplorer* m_rf2;
+    RFExplorer* m_rf1 = nullptr;
+    RFExplorer* m_rf2 = nullptr;
 
     int m_rf1_sweep_steps=100;
     int m_rf1_sweep_step_size=100;
     double m_rf1_start_freq = 1;
     double m_rf1_end_freq = 100;
     int m_rf1_threshold = -25;
+    QString m_rf1_module="";
+    QString m_rf1_module_ext="";
+    QString m_rf1_fw_ver="";
+
 
     int m_rf2_sweep_steps=100;
     int m_rf2_sweep_step_size=100;
+    double m_rf2_start_freq = 1;
+    double m_rf2_end_freq = 100;
+    int m_rf2_threshold = -25;
+    QString m_rf2_module="";
+    QString m_rf2_module_ext="";
+    QString m_rf2_fw_ver="";
 
     // Spectrum graph
     QCPGraph* m_spectrumGraph1;
