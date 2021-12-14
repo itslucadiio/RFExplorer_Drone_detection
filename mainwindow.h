@@ -32,6 +32,8 @@ public slots:
     // Reset all plots
     void resetPlots();
     void newRFExplorer(RFExplorer* device);
+    void handleDrawTimerTick();
+
 
 protected slots:
     void on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold);
@@ -84,6 +86,10 @@ private slots:
 
 private:
     Ui::MainWindow *m_ui;
+    QTimer* m_drawTimer;
+
+    RFExplorer* m_rf1;
+    RFExplorer* m_rf2;
 
     int m_rf1_sweep_steps=100;
     int m_rf1_sweep_step_size=100;

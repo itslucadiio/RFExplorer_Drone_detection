@@ -68,6 +68,10 @@ public:
     void sendCommand(QString msg);
 
 
+    QVector<float> getPowerVector();
+    QVector<double> getFreqsVector();
+    QVector<Detection> getDetections();
+
 signals:
     void log(const QString& text); // Write message to log
     void new_config(int start_freq, int sweep_steps, int step_size, int threshold);
@@ -94,7 +98,9 @@ private:
     QString port_name = "";
     QString serial_number = "";
 
-    QVector<Detection> detections;
+    QVector<float> m_powerVector;
+    QVector<double> m_freqsVector;
+    QVector<Detection> m_detections;
 
     int threshold = -40;
 

@@ -7,19 +7,30 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 {
     m_ui->setupUi(this);
     resetPlots();
+
+    //Create plots update timer
+    m_drawTimer = new QTimer(this);
+    m_drawTimer->setInterval(1000.0 /10.0);
+    m_drawTimer->setTimerType(Qt::PreciseTimer);
+    connect(m_drawTimer,SIGNAL(timeout()),this,SLOT(handleDrawTimerTick()));
+    m_drawTimer->start();
+
 }
 
 MainWindow::~MainWindow()
 {
+    //Cleanup allocated resources
+    delete m_drawTimer;
     delete m_ui;
 }
 
 void MainWindow::newRFExplorer(RFExplorer* device)
 {
+    m_rf1 = device;
     //Signals from RFExplorer
     connect(device, SIGNAL(new_config(int,int,int, int)), this, SLOT(on_newRf1Config(int,int,int,int)), Qt::DirectConnection);
-    connect(device, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), this, SLOT(on_newRf1SweepData(QVector<float>,QVector<double>)), Qt::DirectConnection);
-    connect(device, SIGNAL(active_detections(QVector<Detection>)),this, SLOT(on_newRf1Detections(QVector<Detection>)), Qt::DirectConnection);
+    //connect(device, SIGNAL(powers_freqs(QVector<float>,QVector<double>)), this, SLOT(on_newRf1SweepData(QVector<float>,QVector<double>)), Qt::DirectConnection);
+    //connect(device, SIGNAL(active_detections(QVector<Detection>)),this, SLOT(on_newRf1Detections(QVector<Detection>)), Qt::DirectConnection);
 
     //Signals from UI
     connect(this, SIGNAL(newRf1Threshold(int)),device, SLOT(edit_threshold(int)));
@@ -118,6 +129,123 @@ void MainWindow::resetPlots()
 
 }
 
+void MainWindow::handleDrawTimerTick()
+{
+    //Manage RFExplorer 1
+    if (m_rf1!=nullptr)
+    {
+        //Main graph
+
+        QVector<float> powerVector =m_rf1->getPowerVector();
+        QVector<double> freqsVector = m_rf1->getFreqsVector();
+
+
+        //Verify vectors data coherence
+        if((!powerVector.isEmpty() && !freqsVector.isEmpty()) && (powerVector.size() == freqsVector.size()))
+        {
+            int samplesCount = powerVector.size();
+
+            QVector<QCPGraphData> detectedSignalGraphData(samplesCount);
+            for (int n =0; n < samplesCount; n++)
+            {
+                detectedSignalGraphData[n].key =freqsVector[n];
+                detectedSignalGraphData[n].value =powerVector[n];
+            }
+            m_spectrumGraph1->data()->set(detectedSignalGraphData);
+            m_ui->rfPlot1->xAxis->setRange(freqsVector.first()-1,freqsVector.last()+1);
+
+        }
+
+        //Detections block
+        QVector<Detection> detections;
+        detections = m_rf1->getDetections();
+
+        m_ui->lbl_rf1_detections->setText(QString::number(detections.size()));
+
+        int maxlevel =0;
+        foreach (Detection det, detections)
+        {
+            int sublevel = det.counter;
+            if(sublevel>maxlevel){ maxlevel=sublevel;}
+        }
+        if (maxlevel >10){maxlevel=10;}
+
+        QString danger = "QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #FF0350,stop: 0.4999 #FF0020,stop: 0.5 #FF0019,stop: 1 #FF0000 );border-bottom-right-radius: 2px;border-bottom-left-radius: 2px;border: .px solid black;}";
+        QString safe= "QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #080,stop: 0.4999 #060,stop: 0.5 #050,stop: 1 #030 );border-bottom-right-radius: 2px;border-bottom-left-radius: 2px;border: 1px solid black;}";
+
+        //Setting progress bar color
+        if(maxlevel < 6)
+        { m_ui->pb_rf1_meter->setStyleSheet(safe);}
+        else
+        {m_ui->pb_rf1_meter->setStyleSheet(danger);}
+
+        m_ui->pb_rf1_meter->setValue(maxlevel);
+
+
+
+
+        //Update PLOT1 Graphs
+        m_ui->rfPlot1->replot();
+
+    }
+
+    //Manage RFExplorer 1
+    if (m_rf2!=nullptr)
+    {
+        //Main graph
+
+        QVector<float> powerVector =m_rf2->getPowerVector();
+        QVector<double> freqsVector = m_rf2->getFreqsVector();
+
+
+        //Verify vectors data coherence
+        if((!powerVector.isEmpty() && !freqsVector.isEmpty()) && (powerVector.size() == freqsVector.size()))
+        {
+            int samplesCount = powerVector.size();
+
+            QVector<QCPGraphData> detectedSignalGraphData(samplesCount);
+            for (int n =0; n < samplesCount; n++)
+            {
+                detectedSignalGraphData[n].key =freqsVector[n];
+                detectedSignalGraphData[n].value =powerVector[n];
+            }
+            m_spectrumGraph2->data()->set(detectedSignalGraphData);
+            m_ui->rfPlot2->xAxis->setRange(freqsVector.first()-1,freqsVector.last()+1);
+
+        }
+
+        //Detections block
+        QVector<Detection> detections;
+        detections = m_rf2->getDetections();
+
+        m_ui->lbl_rf2_detections->setText(QString::number(detections.size()));
+
+        int maxlevel =0;
+        foreach (Detection det, detections)
+        {
+            int sublevel = det.counter;
+            if(sublevel>maxlevel){ maxlevel=sublevel;}
+        }
+        if (maxlevel >10){maxlevel=10;}
+
+        QString danger = "QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #FF0350,stop: 0.4999 #FF0020,stop: 0.5 #FF0019,stop: 1 #FF0000 );border-bottom-right-radius: 2px;border-bottom-left-radius: 2px;border: .px solid black;}";
+        QString safe= "QProgressBar::chunk {background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0,stop: 0 #080,stop: 0.4999 #060,stop: 0.5 #050,stop: 1 #030 );border-bottom-right-radius: 2px;border-bottom-left-radius: 2px;border: 1px solid black;}";
+
+        //Setting progress bar color
+        if(maxlevel < 6)
+        { m_ui->pb_rf2_meter->setStyleSheet(safe);}
+        else
+        {m_ui->pb_rf2_meter->setStyleSheet(danger);}
+
+        m_ui->pb_rf2_meter->setValue(maxlevel);
+
+        //Update PLOT1 Graphs
+        m_ui->rfPlot2->replot();
+
+    }
+
+
+}
 
 
 void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold)
@@ -148,16 +276,20 @@ void MainWindow::on_newRf1SweepData(QVector<float> powerVector, QVector<double> 
     qDebug()<<"NEW SWEEP DATA";
 
     int samplesCount = powerVector.size();
-    QVector<QCPGraphData> detectedSignalGraphData(samplesCount);
-    for (int n =0; n < samplesCount; n++)
+    //Verify data coherence
+    if(powerVector.size() == freqsVector.size())
     {
-        detectedSignalGraphData[n].key =freqsVector[n];
-        detectedSignalGraphData[n].value =powerVector[n];
+        QVector<QCPGraphData> detectedSignalGraphData(samplesCount);
+        for (int n =0; n < samplesCount; n++)
+        {
+            detectedSignalGraphData[n].key =freqsVector[n];
+            detectedSignalGraphData[n].value =powerVector[n];
+        }
+        m_spectrumGraph1->data()->set(detectedSignalGraphData);
+        m_ui->rfPlot1->xAxis->setRange(freqsVector.first()-1,freqsVector.last()+1);
+        //m_ui->rfPlot1->rescaleAxes();
+        m_ui->rfPlot1->replot();
     }
-    m_spectrumGraph1->data()->set(detectedSignalGraphData);
-    m_ui->rfPlot1->xAxis->setRange(freqsVector.first()-1,freqsVector.last()+1);
-    //m_ui->rfPlot1->rescaleAxes();
-    m_ui->rfPlot1->replot();
 
 
 }
@@ -166,6 +298,20 @@ void MainWindow::on_newRf1Detections(QVector<Detection> detections)
 {
     qDebug()<<"HEY THERE";
     m_ui->lbl_rf1_detections->setText(QString::number(detections.size()));
+    int level =0;
+    foreach (Detection det, detections)
+    {
+        int sublevel = det.counter;
+        if(sublevel>level)
+        {
+            level=sublevel;
+        }
+    }
+    if (level >10)
+    {
+        level=10;
+    }
+    m_ui->pb_rf1_meter->setValue(level);
 
 }
 

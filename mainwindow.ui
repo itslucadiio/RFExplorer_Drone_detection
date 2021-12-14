@@ -96,9 +96,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -117,9 +115,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -138,9 +134,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -151,7 +145,7 @@ color: rgb(227, 176, 31);</string>
              <widget class="QLabel" name="label_9">
               <property name="geometry">
                <rect>
-                <x>440</x>
+                <x>400</x>
                 <y>10</y>
                 <width>51</width>
                 <height>19</height>
@@ -159,9 +153,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -180,9 +172,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -201,9 +191,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -214,14 +202,39 @@ color: rgb(227, 176, 31);</string>
              <widget class="QLabel" name="lbl_rf1_detections">
               <property name="geometry">
                <rect>
-                <x>540</x>
+                <x>480</x>
                 <y>10</y>
-                <width>62</width>
-                <height>17</height>
+                <width>21</width>
+                <height>16</height>
                </rect>
               </property>
               <property name="text">
                <string>0</string>
+              </property>
+             </widget>
+             <widget class="QProgressBar" name="pb_rf1_meter">
+              <property name="geometry">
+               <rect>
+                <x>510</x>
+                <y>10</y>
+                <width>131</width>
+                <height>16</height>
+               </rect>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(0, 255, 0);</string>
+              </property>
+              <property name="maximum">
+               <number>10</number>
+              </property>
+              <property name="value">
+               <number>0</number>
+              </property>
+              <property name="format">
+               <string/>
               </property>
              </widget>
             </widget>
@@ -250,7 +263,6 @@ color: rgb(227, 176, 31);</string>
            </property>
            <property name="font">
             <font>
-             <family>Arial</family>
              <pointsize>10</pointsize>
             </font>
            </property>
@@ -285,9 +297,7 @@ color: rgb(227, 176, 31);</string>
            </property>
            <property name="font">
             <font>
-             <family>Arial Black</family>
              <pointsize>11</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -376,9 +386,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -410,7 +418,6 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -433,7 +440,6 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -455,9 +461,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -488,9 +492,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -557,9 +559,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>13</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
               <kerning>false</kerning>
              </font>
@@ -588,9 +588,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>13</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
               <kerning>false</kerning>
              </font>
@@ -620,7 +618,6 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>13</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -693,9 +690,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -714,9 +709,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -735,9 +728,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -756,9 +747,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -777,9 +766,7 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -798,14 +785,50 @@ color: rgb(227, 176, 31);</string>
               </property>
               <property name="font">
                <font>
-                <family>Arial</family>
                 <pointsize>14</pointsize>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
               <property name="text">
                <string>FIN:</string>
+              </property>
+             </widget>
+             <widget class="QLabel" name="lbl_rf2_detections">
+              <property name="geometry">
+               <rect>
+                <x>460</x>
+                <y>10</y>
+                <width>21</width>
+                <height>16</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>0</string>
+              </property>
+             </widget>
+             <widget class="QProgressBar" name="pb_rf2_meter">
+              <property name="geometry">
+               <rect>
+                <x>490</x>
+                <y>10</y>
+                <width>131</width>
+                <height>16</height>
+               </rect>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(0, 255, 0);</string>
+              </property>
+              <property name="maximum">
+               <number>10</number>
+              </property>
+              <property name="value">
+               <number>0</number>
+              </property>
+              <property name="format">
+               <string/>
               </property>
              </widget>
             </widget>
@@ -834,7 +857,6 @@ color: rgb(227, 176, 31);</string>
            </property>
            <property name="font">
             <font>
-             <family>Arial</family>
              <pointsize>10</pointsize>
             </font>
            </property>
@@ -869,9 +891,7 @@ color: rgb(227, 176, 31);</string>
            </property>
            <property name="font">
             <font>
-             <family>Arial Black</family>
              <pointsize>11</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -949,9 +969,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -983,7 +1001,6 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1006,7 +1023,6 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1028,9 +1044,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1061,9 +1075,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>10</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1130,9 +1142,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>13</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
               <kerning>false</kerning>
              </font>
@@ -1161,9 +1171,7 @@ background-color: rgb(227, 176, 31);</string>
             </property>
             <property name="font">
              <font>
-              <family>Arial</family>
               <pointsize>13</pointsize>
-              <weight>50</weight>
               <bold>false</bold>
               <kerning>false</kerning>
              </font>
@@ -1193,7 +1201,6 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>13</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1219,7 +1226,7 @@ background-color: rgb(227, 176, 31);</string>
      <x>0</x>
      <y>0</y>
      <width>1029</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>

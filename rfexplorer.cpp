@@ -27,6 +27,9 @@ void RFExplorer::startConnection()
         sendCommand("r");          //Reset
         QThread::sleep(10);
         sendCommand("C0");         //Request config datas
+
+        //QThread::sleep(5);
+        //sendCommand("GO");         //Start sweeper
     }
 }
 
@@ -44,33 +47,13 @@ void RFExplorer::stopConnection()
 void RFExplorer::startSweeper()
 {
         sendCommand("r");          //Reset
-        QThread::sleep(10);
+        QThread::sleep(5);
         sendCommand("C0");         //Request config datas
         QThread::sleep(100);
         sendCommand("CH");         //Stop spectrum analizer data dump
 
 }
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
-void RFExplorer::sendCommand(QString msg)
-{
-    QString array;
-    array.append("#");
-    array.append(char(msg.length() + 2));
-    array.append(msg);
-    QByteArray data = array.toUtf8();
 
-    send_data(data);
-}
-
-void RFExplorer::send_data(QByteArray data)
-{
-    if (serial_port->isOpen())
-    {
-        serial_port->write(data);
-        serial_port->waitForBytesWritten(500);
-        if (m_debug) emit log(QString("[serialManager.send_data] Data sent!"));
-    }
-}
 
 void RFExplorer::read_data()
 {
@@ -148,10 +131,11 @@ void RFExplorer::read_data()
             //double sweep_end = sweep_start + (sweep_step * this->getSweep_Steps() * 0.999999);
             //double slope = abs((this->getAmp_Bottom() - this->getAmp_Top()))/255.0;
 
-            QVector<float> powerVector;
-            QVector<double> freqsVector;
+            //POWERS DATA BLOCK
+            //----------------------------------------------------------------------------
             QVector<int> thresholdCounter;
             QVector<float> highPower;
+            QVector<float> _powerVector;
             for (int i = 0; i < checkedData.length(); i = i + 2)
             {
                 QByteArray pairData;
@@ -161,7 +145,7 @@ void RFExplorer::read_data()
                 int decValue = pairData.toInt(&valid,16);
                 //double powerValue = this->getAmp_Bottom() + (slope * decValue);
                 float powerValue = -(decValue/2.0);
-                powerVector.append(powerValue);
+                _powerVector.append(powerValue);
 
                 //Detection of high signals (above threshold)
                 if (powerValue >= this->getThreshold()){  //Look for db above threshold
@@ -169,61 +153,99 @@ void RFExplorer::read_data()
                     highPower.append(powerValue);
                 }
             }
+            m_powerVector = _powerVector;
 
+
+            //FREQUENCIES DATA BLOCK
+            //----------------------------------------------------------------------------
             double frequency = sweep_start - sweep_step;
             QVector<double> highFreq; //Vector de frequencies que han saltat
+            QVector<double> _freqsVector; //Vector de frequencies del sweep
             for (int i = 0; i < this->getSweep_Steps(); ++i)
             {
                 frequency = frequency + sweep_step;
-                freqsVector.append(frequency);
+                _freqsVector.append(frequency);
 
                 //Detection of high signals (above threshold)
                 if (thresholdCounter.contains(i))    //Look for corresponding frequency position
                     highFreq.append(frequency);
             }
+            m_freqsVector = _freqsVector; //Assign new values at end (hopping no mutex needed)
+
+
+            //DETECTIONS DATA BLOCK
+            //----------------------------------------------------------------------------
+            QVector<Detection> _detections;
+            _detections = m_detections; //Cloning to manage data
 
             for (int j = 0; j < highFreq.length(); ++j) {
                 bool encontrado = false;
-                if(detections.length() == 0)
+                if(_detections.length() == 0)
                 {
-                    detections.append({highFreq[j], highPower[j], 0});
+                    _detections.append({highFreq[j], highPower[j], 0});
                 }
                 else
                 {
-                    for (int i = 0; i < detections.length(); ++i) {
-                        if(detections[i].freq == highFreq[j])
+                    for (int i = 0; i < _detections.length(); ++i) {
+                        if(_detections[i].freq == highFreq[j])
                             encontrado = true;
                     }
                     if(!encontrado)
-                        detections.append({highFreq[j],highPower[j],0});
+                        _detections.append({highFreq[j],highPower[j],0});
                 }
             }
 
-            qDebug() << "###################################################################################################";
-            for (int i = 0; i < detections.length(); ++i) {
-                qDebug() << "ANALYSING THE VALUE: " << detections[i].freq << "WITH : "<< detections[i].power << " dBm WITH DETECTIONS: " << detections[i].counter;
-                if(highFreq.contains(detections[i].freq))
+            for (int i = 0; i < _detections.length(); ++i) {
+                qDebug() << "ANALYSING THE VALUE: " << _detections[i].freq << "WITH : "<< _detections[i].power << " dBm WITH m_detections: " << _detections[i].counter;
+                if(highFreq.contains(_detections[i].freq))
                 {
-                    detections[i].counter++;
+                    _detections[i].counter++;
                 }
                 else
                 {
-                    if(detections[i].counter > 2)
+                    if(_detections[i].counter > 2)
                     {
-                        detections[i].counter = detections[i].counter / 2;
+                        _detections[i].counter = _detections[i].counter / 2;
                     }
                     else
                     {
-                        detections.remove(i);
+                        _detections.remove(i);
                     }
                 }
             }
-            //emit signal with powerVector and freqsVector
-            emit powers_freqs(powerVector, freqsVector);
-            //emit signal with detections Vector(struct)
-            emit active_detections(detections);
+
+            m_detections = _detections; //Set new values (Hope not mutex needed)
+
+
+
+            //emit signal with m_powerVector and m_freqsVector
+            //emit powers_freqs(m_powerVector, m_freqsVector);
+            //emit signal with m_detections Vector(struct)
+            //emit active_detections(m_detections);
 
         }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+void RFExplorer::sendCommand(QString msg)
+{
+    QString array;
+    array.append("#");
+    array.append(char(msg.length() + 2));
+    array.append(msg);
+    QByteArray data = array.toUtf8();
+
+    send_data(data);
+}
+
+void RFExplorer::send_data(QByteArray data)
+{
+    if (serial_port->isOpen())
+    {
+        serial_port->write(data);
+        serial_port->waitForBytesWritten(500);
+        if (m_debug) emit log(QString("[serialManager.send_data] Data sent!"));
     }
 }
 
@@ -234,8 +256,8 @@ void RFExplorer::send_config(double start_freq, double end_freq)
     QString _end_freq = QString::number(end_freq,'f',0);
 
     QString data;
-    data.append("#");
-    data.append(char(0x20));
+    //data.append("#");
+    //data.append(char(0x20));
     data.append("C2-F:");
 
     if (_start_freq.length()<7)
@@ -259,9 +281,12 @@ void RFExplorer::send_config(double start_freq, double end_freq)
     data.append(QString(getAmp_Top()));
     data.append(",");
     data.append(QString(getAmp_Bottom()));
+    sendCommand(data);
 
-    QByteArray byteData = data.toUtf8();
-    send_data(byteData);
+    QThread::sleep(2);
+    sendCommand("C0");
+
+
 }
 
 void RFExplorer::edit_threshold(int threshold)
@@ -275,6 +300,23 @@ void RFExplorer::edit_threshold(int threshold)
 //------------------------------------------------------------------------------------------------------------------------------------
 //GETTERS AND SETTERS
 //------------------------------------------------------------------------------------------------------------------------------------
+
+QVector<float> RFExplorer::getPowerVector()
+{
+    return m_powerVector;
+}
+
+QVector<double> RFExplorer::getFreqsVector()
+{
+    return m_freqsVector;
+}
+
+QVector<Detection> RFExplorer::getDetections()
+{
+    return m_detections;
+}
+
+
 int RFExplorer::getUndoccumented() const
 {
     return Undoccumented;
