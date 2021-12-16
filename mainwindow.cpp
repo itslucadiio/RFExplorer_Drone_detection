@@ -400,6 +400,14 @@ void MainWindow::on_vslider_rf1_sliderReleased()
     emit newRf1Threshold(value);
 }
 
+
+void MainWindow::on_vslider_rf1_sliderPressed()
+{
+    int value = m_ui->vslider_rf1->value();
+    updateRf1Threshold(value);
+    emit newRf1Threshold(value);
+}
+
 void MainWindow::updateRf1Threshold(int value)
 {
     m_rf1_threshold = value;
@@ -491,6 +499,16 @@ void MainWindow::on_vslider_rf2_sliderReleased()
     updateRf2Threshold(value);
     emit newRf2Threshold(value);
 }
+
+
+
+void MainWindow::on_vslider_rf2_sliderPressed()
+{
+    int value = m_ui->vslider_rf2->value();
+    updateRf2Threshold(value);
+    emit newRf2Threshold(value);
+}
+
 
 void MainWindow::updateRf2Threshold(int value)
 {

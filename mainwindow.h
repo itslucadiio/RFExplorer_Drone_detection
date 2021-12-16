@@ -66,6 +66,10 @@ private slots:
     void on_vslider_rf2_sliderReleased();
     void on_vslider_rf2_valueChanged(int value);
 
+    void on_vslider_rf1_sliderPressed();
+
+    void on_vslider_rf2_sliderPressed();
+
 private:
     Ui::MainWindow *m_ui;
     QTimer* m_drawTimer;
