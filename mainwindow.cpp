@@ -31,7 +31,7 @@ void MainWindow::newRF1Explorer(RFExplorer* device)
 {
     m_rf1 = device;
     //Signals from RFExplorer
-    connect(device, SIGNAL(new_config(int,int,int, int)), this, SLOT(on_newRf1Config(int,int,int,int)), Qt::DirectConnection);
+    connect(device, SIGNAL(new_config(int,int,int,int,QString)), this, SLOT(on_newRf1Config(int,int,int,int,QString)), Qt::DirectConnection);
 
     //Signals from UI
     connect(this, SIGNAL(newRf1Threshold(int)),device, SLOT(edit_threshold(int)));
@@ -47,7 +47,7 @@ void MainWindow::newRF2Explorer(RFExplorer* device)
 {
     m_rf2 = device;
     //Signals from RFExplorer
-    connect(device, SIGNAL(new_config(int,int,int, int)), this, SLOT(on_newRf2Config(int,int,int,int)), Qt::DirectConnection);
+    connect(device, SIGNAL(new_config(int,int,int,int,QString)), this, SLOT(on_newRf2Config(int,int,int,int,QString)), Qt::DirectConnection);
     connect(device, SIGNAL(new_module_info()), this, SLOT(on_newRf2ModuleInfo()), Qt::DirectConnection);
 
     //Signals from UI
@@ -207,13 +207,18 @@ void MainWindow::handleDrawTimerTick()
 
         //Setting progress bar color
         if(maxlevel < 6)
-        { m_ui->pb_rf1_meter->setStyleSheet(safe);
-            m_ui->lbl_rf1_alert->setVisible(false);
+        {
+            m_ui->pb_rf1_meter->setStyleSheet(safe);
+            //m_ui->lbl_rf1_alert->setVisible(false);
         }
         else
         {
             m_ui->pb_rf1_meter->setStyleSheet(danger);
             m_ui->lbl_rf1_alert->setVisible(true);
+
+            QTimer::singleShot(10000, [this](){
+                m_ui->lbl_rf1_alert->setVisible(false);
+            });
         }
 
         m_ui->pb_rf1_meter->setValue(maxlevel);
@@ -270,12 +275,16 @@ void MainWindow::handleDrawTimerTick()
         if(maxlevel < 6)
         {
             m_ui->pb_rf2_meter->setStyleSheet(safe);
-            m_ui->lbl_rf2_alert->setVisible(false);
+            //m_ui->lbl_rf2_alert->setVisible(false);
         }
         else
         {
             m_ui->pb_rf2_meter->setStyleSheet(danger);
             m_ui->lbl_rf2_alert->setVisible(true);
+
+            QTimer::singleShot(10000, [this](){
+                m_ui->lbl_rf2_alert->setVisible(false);
+            });
         }
 
         m_ui->pb_rf2_meter->setValue(maxlevel);
@@ -289,7 +298,7 @@ void MainWindow::handleDrawTimerTick()
 }
 
 
-void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold)
+void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold, QString sn)
 {
     int bw = sweep_steps * step_size;
     int end_freq = start_freq + (bw/1000);
@@ -303,6 +312,7 @@ void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size,
     m_ui->lbl_rf1_freq_min->setText(QString::number(m_rf1_start_freq));
     m_ui->lbl_rf1_freq_max->setText(QString::number(m_rf1_end_freq));
     m_ui->vslider_rf1->setValue(m_rf1_threshold);
+    m_ui->lbl_rf1_serialnumber->setText(sn);
 
     //Update Graph params
     updateRf1Threshold(m_rf1_threshold);
@@ -321,7 +331,7 @@ void on_newRf2ModuleInfo()
 {
 
 }
-void MainWindow::on_newRf2Config(int start_freq, int sweep_steps, int step_size, int threshold)
+void MainWindow::on_newRf2Config(int start_freq, int sweep_steps, int step_size, int threshold, QString sn)
 {
     int bw = sweep_steps * step_size;
     int end_freq = start_freq + (bw/1000);
@@ -335,6 +345,7 @@ void MainWindow::on_newRf2Config(int start_freq, int sweep_steps, int step_size,
     m_ui->lbl_rf2_freq_min->setText(QString::number(m_rf2_start_freq));
     m_ui->lbl_rf2_freq_max->setText(QString::number(m_rf2_end_freq));
     m_ui->vslider_rf1->setValue(m_rf2_threshold);
+    m_ui->lbl_rf2_serialnumber->setText(sn);
 
     //Update Graph params
     updateRf2Threshold(m_rf2_threshold);

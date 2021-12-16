@@ -78,7 +78,7 @@ public:
 
 signals:
     void log(const QString& text); // Write message to log
-    void new_config(int start_freq, int sweep_steps, int step_size, int threshold);
+    void new_config(int start_freq, int sweep_steps, int step_size, int threshold, QString sn);
     void new_serial(QString serial);
     void powers_freqs(QVector<float> powerVector, QVector<double> freqsVector);
     void active_detections(QVector<Detection> detections);

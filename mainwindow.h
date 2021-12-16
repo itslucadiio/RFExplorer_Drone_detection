@@ -37,9 +37,9 @@ public slots:
 
 
 protected slots:
-    void on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold);
+    void on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold, QString sn);
     void on_newRf1ModuleInfo();
-    void on_newRf2Config(int start_freq, int sweep_steps, int step_size, int threshold);
+    void on_newRf2Config(int start_freq, int sweep_steps, int step_size, int threshold, QString sn);
     void on_newRf2ModuleInfo();
 
 private slots:
