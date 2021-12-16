@@ -6,7 +6,6 @@
 #include <QDebug>
 #include "rfexplorer.h"
 
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -105,5 +104,6 @@ private:
 
     void updateRf1Threshold(int value);
     void updateRf2Threshold(int value);
+
 };
 #endif // MAINWINDOW_H

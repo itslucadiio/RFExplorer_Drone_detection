@@ -1,4 +1,4 @@
-QT += core gui widgets printsupport quick serialport
+QT += core gui widgets printsupport quick serialport multimedia
 
 CONFIG += c++11
 
@@ -15,7 +15,8 @@ SOURCES += \
         serialmanager.cpp \
         utils.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += \
+    resources.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
