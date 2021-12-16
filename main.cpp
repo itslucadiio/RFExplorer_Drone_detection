@@ -103,14 +103,14 @@ void writeToLog(const QString& text)
         QTextStream logStream(&outputFile);
         if (logStream.device())
         {
-            logStream << message;
-            Qt::endl(logStream);
+            logStream << message << "\n";
+            //Qt::endl(logStream);
         }
         outputFile.close();
     }
 
     QTextStream stdStream(stdout);
-    stdStream << message;
-    Qt::endl(stdStream);
+    stdStream << message << "\n";
+    //(Qt::endl(stdStream);
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
