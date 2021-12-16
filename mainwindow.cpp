@@ -44,7 +44,7 @@ void MainWindow::newRF1Explorer(RFExplorer* device)
     if (m_initial_launch)
     {
         m_ui->gb_rf1->setVisible(true);
-        m_ui->gb_rf2->setVisible(true);
+        //m_ui->gb_rf2->setVisible(true);
         m_ui->asdt_logo_loading->setVisible(false);
         m_initial_launch = false;
     }
@@ -69,7 +69,7 @@ void MainWindow::newRF2Explorer(RFExplorer* device)
 
     if (m_initial_launch)
     {
-        m_ui->gb_rf1->setVisible(true);
+        //m_ui->gb_rf1->setVisible(true);
         m_ui->gb_rf2->setVisible(true);
         m_ui->asdt_logo_loading->setVisible(false);
         m_initial_launch = false;
