@@ -50,7 +50,17 @@ void MainWindow::newRF1Explorer(RFExplorer* device)
 
 void MainWindow::on_newRf1ModuleInfo()
 {
+    m_rf1_module_ext = m_rf1->getExpModule();
+    m_rf1_module = m_rf1->getModel();
+    m_rf1_fw_ver = m_rf1->getFwVer();
 
+    if(m_rf1_module!="006")
+    {
+        m_ui->btn_rf1_51->setVisible(false);
+        m_ui->btn_rf1_58->setVisible(false);
+    }else{
+        qDebug("RF1 is 006");
+    }
 }
 
 void MainWindow::newRF2Explorer(RFExplorer* device)
@@ -365,7 +375,7 @@ void MainWindow::on_newRf2Config(int start_freq, int sweep_steps, int step_size,
     //Update UI visible data
     m_ui->lbl_rf2_freq_min->setText(QString::number(m_rf2_start_freq));
     m_ui->lbl_rf2_freq_max->setText(QString::number(m_rf2_end_freq));
-    m_ui->vslider_rf1->setValue(m_rf2_threshold);
+    m_ui->vslider_rf2->setValue(m_rf2_threshold);
     m_ui->lbl_rf2_serialnumber->setText(sn);
 
     //Update Graph params
@@ -407,6 +417,7 @@ void MainWindow::updateRf1Threshold(int value)
     thresholdLevelGraphData[0].value = m_rf1_threshold;
     thresholdLevelGraphData[1].value = m_rf1_threshold;
     m_rf1ThresholdGraph->data()->set(thresholdLevelGraphData);
+    m_ui->vslider_rf1->setValue(m_rf1_threshold);
 }
 
 void MainWindow::on_btn_rf1_24_clicked()
@@ -509,6 +520,7 @@ void MainWindow::updateRf2Threshold(int value)
     thresholdLevelGraphData[0].value = m_rf2_threshold;
     thresholdLevelGraphData[1].value = m_rf2_threshold;
     m_rf2ThresholdGraph->data()->set(thresholdLevelGraphData);
+    m_ui->vslider_rf2->setValue(m_rf2_threshold);
 
 }
 
