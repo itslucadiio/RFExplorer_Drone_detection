@@ -22,6 +22,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     connect(m_drawTimer,SIGNAL(timeout()),this,SLOT(handleDrawTimerTick()));
     m_drawTimer->start();
 
+    QTimer::singleShot(20000, [this](){
+        m_ui->gb_rf1->setVisible(true);
+        m_ui->gb_rf2->setVisible(true);
+        m_ui->asdt_logo_loading->setVisible(false);
+    });
 }
 
 MainWindow::~MainWindow()
@@ -41,14 +46,6 @@ void MainWindow::newRF1Explorer(RFExplorer* device)
     connect(this, SIGNAL(newRf1Threshold(int)),device, SLOT(edit_threshold(int)));
     connect(this, SIGNAL(newRf1Frequency(double,double)), device, SLOT(send_config(double,double)));
 
-    if (m_initial_launch)
-    {
-        m_ui->gb_rf1->setVisible(true);
-        //m_ui->gb_rf2->setVisible(true);
-        m_ui->asdt_logo_loading->setVisible(false);
-        m_initial_launch = false;
-    }
-
 }
 
 void MainWindow::on_newRf1ModuleInfo()
@@ -67,13 +64,6 @@ void MainWindow::newRF2Explorer(RFExplorer* device)
     connect(this, SIGNAL(newRf2Threshold(int)),device, SLOT(edit_threshold(int)));
     connect(this, SIGNAL(newRf2Frequency(double,double)), device, SLOT(send_config(double,double)));
 
-    if (m_initial_launch)
-    {
-        //m_ui->gb_rf1->setVisible(true);
-        m_ui->gb_rf2->setVisible(true);
-        m_ui->asdt_logo_loading->setVisible(false);
-        m_initial_launch = false;
-    }
 }
 
 void MainWindow::on_newRf2ModuleInfo()

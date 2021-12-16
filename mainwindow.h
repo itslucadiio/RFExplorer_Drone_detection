@@ -111,7 +111,6 @@ private:
 
     bool m_lbl_rf1_alert_visible = false;
     bool m_lbl_rf2_alert_visible = false;
-    bool m_initial_launch = true;
 
 };
 #endif // MAINWINDOW_H
