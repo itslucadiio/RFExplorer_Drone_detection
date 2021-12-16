@@ -10,17 +10,79 @@
     <height>726</height>
    </rect>
   </property>
+  <property name="palette">
+   <palette>
+    <active>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>246</red>
+        <green>245</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </active>
+    <inactive>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>246</red>
+        <green>245</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </inactive>
+    <disabled>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>246</red>
+        <green>245</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>246</red>
+        <green>245</green>
+        <blue>244</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </disabled>
+   </palette>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(77, 77, 77);
-color: rgb(227, 176, 31);</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(77, 77, 77);
-color: rgb(227, 176, 31);</string>
+    <string notr="true">border-color: rgba(191, 64, 64, 0);</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -38,12 +100,10 @@ color: rgb(227, 176, 31);</string>
        <bool>false</bool>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(77, 77, 77);
-border-color: rgb(77, 77, 77);
-color: rgb(227, 176, 31);</string>
+       <string notr="true">border-color: rgba(191, 64, 64, 0);</string>
       </property>
       <property name="title">
-       <string>RF1</string>
+       <string/>
       </property>
       <property name="flat">
        <bool>true</bool>
@@ -74,7 +134,8 @@ color: rgb(227, 176, 31);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(77, 77, 77);</string>
+              <string notr="true">background-color: rgb(44, 63, 155);
+color: rgb(255, 255, 255);</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -290,7 +351,7 @@ color: rgb(227, 176, 31);</string>
             <bool>false</bool>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(77, 77, 77);</string>
+            <string notr="true"/>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
@@ -322,10 +383,11 @@ color: rgb(227, 176, 31);</string>
 margin-left: 1.9em;
 margin-right: 0.3em;
 margin-top: 0.3em;
-margin-bottom: 1em;</string>
+margin-bottom: 1em;
+color: rgb(237, 51, 59);</string>
               </property>
               <property name="text">
-               <string>ALERTA</string>
+               <string>!</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -350,7 +412,7 @@ margin-bottom: 1em;</string>
            <property name="minimumSize">
             <size>
              <width>30</width>
-             <height>0</height>
+             <height>30</height>
             </size>
            </property>
            <property name="font">
@@ -364,13 +426,11 @@ margin-bottom: 1em;</string>
             <bool>false</bool>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: rgb(77, 77, 77);
-border-color: rgb(0, 0, 0);
-border-color: rgb(77, 77, 77);
-background-color: rgb(227, 176, 31);</string>
+            <string notr="true">background-color: rgb(44, 63, 155);
+color: rgb(255, 255, 255);</string>
            </property>
            <property name="text">
-            <string>&lt;&lt;</string>
+            <string>&lt;</string>
            </property>
            <property name="flat">
             <bool>false</bool>
@@ -399,6 +459,9 @@ background-color: rgb(227, 176, 31);</string>
              <height>0</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(44, 63, 155);</string>
+           </property>
            <property name="minimum">
             <number>-100</number>
            </property>
@@ -426,9 +489,8 @@ background-color: rgb(227, 176, 31);</string>
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: rgb(77, 77, 77);
-border-color: rgb(77, 77, 77);
-background-color: rgb(227, 176, 31);</string>
+            <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(44, 63, 155);</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -440,7 +502,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>40</y>
+              <y>70</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -448,12 +510,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>2.4 Ghz</string>
@@ -472,7 +534,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>40</y>
+              <y>70</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -480,12 +542,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>5.1 Ghz</string>
@@ -495,7 +557,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>200</x>
-              <y>40</y>
+              <y>70</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -503,12 +565,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>5.8 Ghz</string>
@@ -518,7 +580,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>80</y>
+              <y>100</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -526,12 +588,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>900 Mhz</string>
@@ -550,7 +612,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>80</y>
+              <y>100</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -558,12 +620,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>433 Mhz</string>
@@ -582,14 +644,14 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>140</y>
+              <y>160</y>
               <width>131</width>
               <height>31</height>
              </rect>
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="text">
@@ -600,14 +662,14 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>180</y>
+              <y>200</y>
               <width>131</width>
               <height>31</height>
              </rect>
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="text">
@@ -618,14 +680,14 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>160</x>
-              <y>140</y>
+              <y>160</y>
               <width>111</width>
               <height>31</height>
              </rect>
             </property>
             <property name="font">
              <font>
-              <pointsize>13</pointsize>
+              <pointsize>11</pointsize>
               <weight>50</weight>
               <bold>false</bold>
               <kerning>false</kerning>
@@ -651,7 +713,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>100</x>
-              <y>232</y>
+              <y>250</y>
               <width>111</width>
               <height>31</height>
              </rect>
@@ -664,7 +726,9 @@ background-color: rgb(227, 176, 31);</string>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);
+background-color: rgb(44, 63, 155);
+color: rgb(255, 255, 255);</string>
             </property>
             <property name="text">
              <string>Modificar</string>
@@ -679,6 +743,13 @@ background-color: rgb(227, 176, 31);</string>
               <height>16</height>
              </rect>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>SN:</string>
             </property>
@@ -686,11 +757,18 @@ background-color: rgb(227, 176, 31);</string>
            <widget class="QLabel" name="lbl_rf1_serialnumber">
             <property name="geometry">
              <rect>
-              <x>50</x>
+              <x>90</x>
               <y>10</y>
               <width>151</width>
               <height>16</height>
              </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
             </property>
             <property name="text">
              <string>00000000000</string>
@@ -700,14 +778,14 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>160</x>
-              <y>180</y>
+              <y>200</y>
               <width>111</width>
               <height>31</height>
              </rect>
             </property>
             <property name="font">
              <font>
-              <pointsize>13</pointsize>
+              <pointsize>11</pointsize>
              </font>
             </property>
             <property name="text">
@@ -724,12 +802,10 @@ background-color: rgb(227, 176, 31);</string>
     <item>
      <widget class="QGroupBox" name="gb_rf2">
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(77, 77, 77);
-background-color: rgb(77, 77, 77);
-color: rgb(227, 176, 31);</string>
+       <string notr="true"/>
       </property>
       <property name="title">
-       <string>RF2</string>
+       <string/>
       </property>
       <property name="flat">
        <bool>true</bool>
@@ -758,6 +834,10 @@ color: rgb(227, 176, 31);</string>
                <width>600</width>
                <height>34</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(44, 63, 155);
+color: rgb(255, 255, 255);</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
@@ -993,10 +1073,11 @@ color: rgb(227, 176, 31);</string>
 margin-left: 1.9em;
 margin-right: 0.3em;
 margin-top: 0.3em;
-margin-bottom: 1em;</string>
+margin-bottom: 1em;
+color: rgb(237, 51, 59);</string>
               </property>
               <property name="text">
-               <string>ALERTA</string>
+               <string>!</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -1035,13 +1116,11 @@ margin-bottom: 1em;</string>
             <bool>false</bool>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: rgb(77, 77, 77);
-border-color: rgb(0, 0, 0);
-border-color: rgb(77, 77, 77);
-background-color: rgb(227, 176, 31);</string>
+            <string notr="true">background-color: rgb(44, 63, 155);
+color: rgb(255, 255, 255);</string>
            </property>
            <property name="text">
-            <string>&lt;&lt;</string>
+            <string>&lt;</string>
            </property>
            <property name="flat">
             <bool>false</bool>
@@ -1097,9 +1176,8 @@ background-color: rgb(227, 176, 31);</string>
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">color: rgb(77, 77, 77);
-border-color: rgb(77, 77, 77);
-background-color: rgb(227, 176, 31);</string>
+            <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(44, 63, 155);</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -1111,7 +1189,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>40</y>
+              <y>60</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1119,12 +1197,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>2.4 Ghz</string>
@@ -1146,7 +1224,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>40</y>
+              <y>60</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1154,12 +1232,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>5.1 Ghz</string>
@@ -1169,7 +1247,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>200</x>
-              <y>40</y>
+              <y>60</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1177,12 +1255,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>5.8 Ghz</string>
@@ -1192,7 +1270,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>80</y>
+              <y>90</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1200,12 +1278,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>900 Mhz</string>
@@ -1224,7 +1302,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>80</y>
+              <y>90</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1232,12 +1310,12 @@ background-color: rgb(227, 176, 31);</string>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <weight>50</weight>
+              <bold>false</bold>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);</string>
             </property>
             <property name="text">
              <string>433 Mhz</string>
@@ -1256,14 +1334,14 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>140</y>
+              <y>150</y>
               <width>141</width>
               <height>31</height>
              </rect>
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="text">
@@ -1274,14 +1352,14 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>180</y>
+              <y>190</y>
               <width>131</width>
               <height>31</height>
              </rect>
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>10</pointsize>
              </font>
             </property>
             <property name="text">
@@ -1292,14 +1370,14 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>170</x>
-              <y>140</y>
+              <y>150</y>
               <width>111</width>
               <height>31</height>
              </rect>
             </property>
             <property name="font">
              <font>
-              <pointsize>13</pointsize>
+              <pointsize>11</pointsize>
               <weight>50</weight>
               <bold>false</bold>
               <kerning>false</kerning>
@@ -1325,7 +1403,7 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>100</x>
-              <y>232</y>
+              <y>250</y>
               <width>111</width>
               <height>31</height>
              </rect>
@@ -1338,7 +1416,9 @@ background-color: rgb(227, 176, 31);</string>
              </font>
             </property>
             <property name="styleSheet">
-             <string notr="true">border: 2px solid rgb(77, 77, 77);</string>
+             <string notr="true">border: 2px solid rgb(44, 63, 155);
+background-color: rgb(44, 63, 155);
+color: rgb(255, 255, 255);</string>
             </property>
             <property name="text">
              <string>Modificar</string>
@@ -1353,6 +1433,13 @@ background-color: rgb(227, 176, 31);</string>
               <height>16</height>
              </rect>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>SN:</string>
             </property>
@@ -1360,11 +1447,18 @@ background-color: rgb(227, 176, 31);</string>
            <widget class="QLabel" name="lbl_rf2_serialnumber">
             <property name="geometry">
              <rect>
-              <x>50</x>
+              <x>90</x>
               <y>10</y>
               <width>151</width>
               <height>16</height>
              </rect>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
             </property>
             <property name="text">
              <string>00000000000</string>
@@ -1374,14 +1468,14 @@ background-color: rgb(227, 176, 31);</string>
             <property name="geometry">
              <rect>
               <x>170</x>
-              <y>180</y>
+              <y>190</y>
               <width>101</width>
               <height>31</height>
              </rect>
             </property>
             <property name="font">
              <font>
-              <pointsize>13</pointsize>
+              <pointsize>11</pointsize>
              </font>
             </property>
             <property name="text">

@@ -79,7 +79,7 @@ void MainWindow::resetPlots()
     m_ui->rfPlot1->clearGraphs();
     m_ui->rfPlot1->clearItems();
     m_ui->rfPlot1->plotLayout()->clear();
-    m_ui->rfPlot1->setBackground(QBrush(0x4D4D4D));
+    m_ui->rfPlot1->setBackground(QBrush(0xFFFFFF));
 
     // Build axes rectangle
     QCPAxisRect* spectrumAxisRect = new QCPAxisRect(m_ui->rfPlot1);
@@ -100,7 +100,7 @@ void MainWindow::resetPlots()
 
     // Add current spectrum plot
     m_spectrumGraph1 = m_ui->rfPlot1->addGraph(spectrumAxisRect->axis(QCPAxis::atBottom), spectrumAxisRect->axis(QCPAxis::atLeft));
-    m_spectrumGraph1->setPen(QPen(Qt::green, 1.0));
+    m_spectrumGraph1->setPen(QPen(Qt::darkGreen, 2.0));
     m_spectrumGraph1->setAntialiased(true);
 
     // Add detection threshold plot
@@ -120,7 +120,7 @@ void MainWindow::resetPlots()
     m_ui->rfPlot2->clearGraphs();
     m_ui->rfPlot2->clearItems();
     m_ui->rfPlot2->plotLayout()->clear();
-    m_ui->rfPlot2->setBackground(QBrush(0x4D4D4D));
+    m_ui->rfPlot2->setBackground(QBrush(0xFFFFFF));
 
     //***********************************************************
     QCPAxisRect* spectrumAxisRect2 = new QCPAxisRect(m_ui->rfPlot2);
@@ -141,7 +141,7 @@ void MainWindow::resetPlots()
 
     // Add current spectrum plot
     m_spectrumGraph2 = m_ui->rfPlot2->addGraph(spectrumAxisRect2->axis(QCPAxis::atBottom), spectrumAxisRect2->axis(QCPAxis::atLeft));
-    m_spectrumGraph2->setPen(QPen(Qt::green, 1.0));
+    m_spectrumGraph2->setPen(QPen(Qt::darkGreen, 2.0));
     m_spectrumGraph2->setAntialiased(true);
 
     // Add detection threshold plot
@@ -214,11 +214,16 @@ void MainWindow::handleDrawTimerTick()
         else
         {
             m_ui->pb_rf1_meter->setStyleSheet(danger);
-            m_ui->lbl_rf1_alert->setVisible(true);
+            if (!m_lbl_rf1_alert_visible)
+            {
+                m_ui->lbl_rf1_alert->setVisible(true);
+                m_lbl_rf1_alert_visible = true;
 
-            QTimer::singleShot(10000, [this](){
-                m_ui->lbl_rf1_alert->setVisible(false);
-            });
+                QTimer::singleShot(10000, [this](){
+                    m_ui->lbl_rf1_alert->setVisible(false);
+                    m_lbl_rf1_alert_visible = false;
+                });
+            }
         }
 
         m_ui->pb_rf1_meter->setValue(maxlevel);
@@ -280,11 +285,16 @@ void MainWindow::handleDrawTimerTick()
         else
         {
             m_ui->pb_rf2_meter->setStyleSheet(danger);
-            m_ui->lbl_rf2_alert->setVisible(true);
+            if (!m_lbl_rf2_alert_visible)
+            {
+                m_ui->lbl_rf2_alert->setVisible(true);
+                m_lbl_rf2_alert_visible = true;
 
-            QTimer::singleShot(10000, [this](){
-                m_ui->lbl_rf2_alert->setVisible(false);
-            });
+                QTimer::singleShot(10000, [this](){
+                    m_ui->lbl_rf2_alert->setVisible(false);
+                    m_lbl_rf2_alert_visible = false;
+                });
+            }
         }
 
         m_ui->pb_rf2_meter->setValue(maxlevel);

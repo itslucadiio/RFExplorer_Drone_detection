@@ -101,7 +101,7 @@ private:
     bool m_connected;
 
     QString port_name = "";
-    QString serial_number = "Not found";
+    QString serial_number = "No Encontrado";
 
     QVector<float> m_powerVector;
     QVector<double> m_freqsVector;

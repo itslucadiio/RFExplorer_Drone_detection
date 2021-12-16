@@ -105,5 +105,8 @@ private:
     void updateRf1Threshold(int value);
     void updateRf2Threshold(int value);
 
+    bool m_lbl_rf1_alert_visible = false;
+    bool m_lbl_rf2_alert_visible = false;
+
 };
 #endif // MAINWINDOW_H
