@@ -768,7 +768,7 @@ color: rgb(255, 255, 255);</string>
              <rect>
               <x>90</x>
               <y>10</y>
-              <width>151</width>
+              <width>201</width>
               <height>16</height>
              </rect>
             </property>
@@ -1478,7 +1478,7 @@ color: rgb(255, 255, 255);</string>
              <rect>
               <x>90</x>
               <y>10</y>
-              <width>151</width>
+              <width>201</width>
               <height>16</height>
              </rect>
             </property>
