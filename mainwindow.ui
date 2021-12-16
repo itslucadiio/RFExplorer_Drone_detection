@@ -387,7 +387,7 @@ margin-bottom: 1em;
 color: rgb(237, 51, 59);</string>
               </property>
               <property name="text">
-               <string>!</string>
+               <string>!!!</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -411,8 +411,8 @@ color: rgb(237, 51, 59);</string>
            </property>
            <property name="minimumSize">
             <size>
-             <width>30</width>
-             <height>30</height>
+             <width>34</width>
+             <height>34</height>
             </size>
            </property>
            <property name="font">
@@ -441,7 +441,7 @@ color: rgb(255, 255, 255);</string>
           <widget class="QLabel" name="lbl_rf1_db">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -455,7 +455,7 @@ color: rgb(255, 255, 255);</string>
           <widget class="QSlider" name="vslider_rf1">
            <property name="minimumSize">
             <size>
-             <width>30</width>
+             <width>34</width>
              <height>0</height>
             </size>
            </property>
@@ -1077,7 +1077,7 @@ margin-bottom: 1em;
 color: rgb(237, 51, 59);</string>
               </property>
               <property name="text">
-               <string>!</string>
+               <string>!!!</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -1101,8 +1101,8 @@ color: rgb(237, 51, 59);</string>
            </property>
            <property name="minimumSize">
             <size>
-             <width>30</width>
-             <height>0</height>
+             <width>34</width>
+             <height>34</height>
             </size>
            </property>
            <property name="font">
@@ -1131,7 +1131,7 @@ color: rgb(255, 255, 255);</string>
           <widget class="QLabel" name="lbl_rf2_db">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -1189,7 +1189,7 @@ color: rgb(44, 63, 155);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>60</y>
+              <y>70</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1224,7 +1224,7 @@ color: rgb(44, 63, 155);</string>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>60</y>
+              <y>70</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1247,7 +1247,7 @@ color: rgb(44, 63, 155);</string>
             <property name="geometry">
              <rect>
               <x>200</x>
-              <y>60</y>
+              <y>70</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1270,7 +1270,7 @@ color: rgb(44, 63, 155);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>90</y>
+              <y>100</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1302,7 +1302,7 @@ color: rgb(44, 63, 155);</string>
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>90</y>
+              <y>100</y>
               <width>71</width>
               <height>23</height>
              </rect>
@@ -1334,7 +1334,7 @@ color: rgb(44, 63, 155);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>150</y>
+              <y>160</y>
               <width>141</width>
               <height>31</height>
              </rect>
@@ -1352,7 +1352,7 @@ color: rgb(44, 63, 155);</string>
             <property name="geometry">
              <rect>
               <x>20</x>
-              <y>190</y>
+              <y>200</y>
               <width>131</width>
               <height>31</height>
              </rect>
@@ -1370,7 +1370,7 @@ color: rgb(44, 63, 155);</string>
             <property name="geometry">
              <rect>
               <x>170</x>
-              <y>150</y>
+              <y>160</y>
               <width>111</width>
               <height>31</height>
              </rect>
@@ -1468,7 +1468,7 @@ color: rgb(255, 255, 255);</string>
             <property name="geometry">
              <rect>
               <x>170</x>
-              <y>190</y>
+              <y>200</y>
               <width>101</width>
               <height>31</height>
              </rect>

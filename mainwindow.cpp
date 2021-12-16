@@ -440,9 +440,9 @@ void MainWindow::on_btn_rf1_sidebar_clicked()
      m_ui->rf1_sidebar->setVisible(m_ui->rf1_sidebar->isHidden());
      if(m_ui->rf1_sidebar->isHidden())
      {
-         m_ui->btn_rf1_sidebar->setText("<<");
+         m_ui->btn_rf1_sidebar->setText("<");
      }else {
-         m_ui->btn_rf1_sidebar->setText(">>");
+         m_ui->btn_rf1_sidebar->setText(">");
      }
 }
 
@@ -501,9 +501,9 @@ void MainWindow::on_btn_rf2_sidebar_clicked()
     m_ui->rf2_sidebar->setVisible(m_ui->rf2_sidebar->isHidden());
     if(m_ui->rf2_sidebar->isHidden())
     {
-        m_ui->btn_rf2_sidebar->setText("<<");
+        m_ui->btn_rf2_sidebar->setText("<");
     }else {
-        m_ui->btn_rf2_sidebar->setText(">>");
+        m_ui->btn_rf2_sidebar->setText(">");
     }
 }
 
