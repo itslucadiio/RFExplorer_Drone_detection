@@ -1,3 +1,5 @@
 <RCC>
-    <qresource prefix="/"/>
+    <qresource prefix="/">
+        <file>asdt_new_logo.png</file>
+    </qresource>
 </RCC>

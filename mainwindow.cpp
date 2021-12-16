@@ -6,10 +6,14 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
 {
     m_ui->setupUi(this);
+    QMainWindow::showFullScreen();
     resetPlots();
 
     m_ui->lbl_rf1_alert->setVisible(false);
     m_ui->lbl_rf2_alert->setVisible(false);
+    m_ui->asdt_logo_loading->setVisible(true);
+    m_ui->gb_rf1->setVisible(false);
+    m_ui->gb_rf2->setVisible(false);
 
     //Create plots update timer
     m_drawTimer = new QTimer(this);
@@ -36,6 +40,11 @@ void MainWindow::newRF1Explorer(RFExplorer* device)
     //Signals from UI
     connect(this, SIGNAL(newRf1Threshold(int)),device, SLOT(edit_threshold(int)));
     connect(this, SIGNAL(newRf1Frequency(double,double)), device, SLOT(send_config(double,double)));
+
+    m_ui->gb_rf1->setVisible(true);
+    m_ui->gb_rf2->setVisible(true);
+    m_ui->asdt_logo_loading->setVisible(false);
+
 }
 
 void MainWindow::on_newRf1ModuleInfo()
@@ -53,6 +62,10 @@ void MainWindow::newRF2Explorer(RFExplorer* device)
     //Signals from UI
     connect(this, SIGNAL(newRf2Threshold(int)),device, SLOT(edit_threshold(int)));
     connect(this, SIGNAL(newRf2Frequency(double,double)), device, SLOT(send_config(double,double)));
+
+    m_ui->gb_rf1->setVisible(true);
+    m_ui->gb_rf2->setVisible(true);
+    m_ui->asdt_logo_loading->setVisible(false);
 }
 
 void MainWindow::on_newRf2ModuleInfo()
@@ -307,7 +320,6 @@ void MainWindow::handleDrawTimerTick()
 
 }
 
-
 void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold, QString sn)
 {
     int bw = sweep_steps * step_size;
@@ -341,6 +353,7 @@ void on_newRf2ModuleInfo()
 {
 
 }
+
 void MainWindow::on_newRf2Config(int start_freq, int sweep_steps, int step_size, int threshold, QString sn)
 {
     int bw = sweep_steps * step_size;
@@ -372,14 +385,12 @@ void MainWindow::on_vslider_rf1_valueChanged(int value)
     m_ui->lbl_rf1_db->setText(QString::number(value));
 }
 
-
 void MainWindow::on_vslider_rf1_sliderReleased()
 {
     int value = m_ui->vslider_rf1->value();
     updateRf1Threshold(value);
     emit newRf1Threshold(value);
 }
-
 
 void MainWindow::updateRf1Threshold(int value)
 {
@@ -391,7 +402,6 @@ void MainWindow::updateRf1Threshold(int value)
     thresholdLevelGraphData[1].value = m_rf1_threshold;
     m_rf1ThresholdGraph->data()->set(thresholdLevelGraphData);
 }
-
 
 void MainWindow::on_btn_rf1_24_clicked()
 {
@@ -445,8 +455,6 @@ void MainWindow::on_btn_rf1_sidebar_clicked()
          m_ui->btn_rf1_sidebar->setText(">");
      }
 }
-
-
 
 void MainWindow::on_ds_rf1_ini_freq_valueChanged(double arg1)
 {
