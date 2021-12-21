@@ -121,6 +121,7 @@ private:
     QVector<float> m_maxPower2;
 
     bool m_rf1_006 = false;
+    int m_counter = 0;
 
 
 };

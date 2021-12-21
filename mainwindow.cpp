@@ -47,11 +47,6 @@ void MainWindow::newRF1Explorer(RFExplorer* device)
     connect(this, SIGNAL(newRf1Threshold(int)),device, SLOT(edit_threshold(int)));
     connect(this, SIGNAL(newRf1Frequency(double,double)), device, SLOT(send_config(double,double)));
 
-
-    double startFreq = 5800000;
-    double endFreq = 5900000;
-    emit newRf1Frequency(startFreq,endFreq);
-
 }
 
 void MainWindow::on_newRf1ModuleInfo()
@@ -64,13 +59,10 @@ void MainWindow::on_newRf1ModuleInfo()
     {
         m_ui->btn_rf1_51->setVisible(false);
         m_ui->btn_rf1_58->setVisible(false);
-        qDebug() << "24 AL RF1";
-
     }
     else
     {
         qDebug("RF1 is 006");
-        qDebug() << "58 AL RF1";
         m_rf1_006 = true;
     }
 }
@@ -85,21 +77,6 @@ void MainWindow::newRF2Explorer(RFExplorer* device)
     //Signals from UI
     connect(this, SIGNAL(newRf2Threshold(int)),device, SLOT(edit_threshold(int)));
     connect(this, SIGNAL(newRf2Frequency(double,double)), device, SLOT(send_config(double,double)));
-
-    if(m_rf1_006)
-    {
-        double startFreq = 2400000;
-        double endFreq = 2500000;
-        emit newRf2Frequency(startFreq,endFreq);
-        qDebug() << "24 AL RF2";
-    }
-
-    else {
-        double startFreq = 5800000;
-        double endFreq = 5900000;
-        emit newRf2Frequency(startFreq,endFreq);
-        qDebug() << "58 AL RF2";
-    }
 
 }
 
@@ -264,7 +241,6 @@ void MainWindow::handleDrawTimerTick()
             m_spectrumGraph1->data()->set(detectedSignalGraphData);
             m_maxSpectrumGraph1->data()->set(detectedMaxGraph);
             m_ui->rfPlot1->xAxis->setRange(freqsVector.first()-1,freqsVector.last()+1);
-
         }
 
         //Detections block
@@ -303,6 +279,14 @@ void MainWindow::handleDrawTimerTick()
                     m_lbl_rf1_alert_visible = false;
                 });
             }
+        }
+
+
+        if(m_rf1_006 && m_counter == 0){
+            double startFreq = 5800000;
+            double endFreq = 5900000;
+            emit newRf1Frequency(startFreq,endFreq);
+            m_counter = m_counter + 1;
         }
 
         m_ui->pb_rf1_meter->setValue(maxlevel);
@@ -399,6 +383,13 @@ void MainWindow::handleDrawTimerTick()
 
         //Update PLOT1 Graphs
         m_ui->rfPlot2->replot();
+
+        if(!m_rf1_006){
+            double startFreq = 5800000;
+            double endFreq = 5900000;
+            emit newRf2Frequency(startFreq,endFreq);
+            m_rf1_006 = true;
+        }
 
     }
 
