@@ -64,11 +64,13 @@ void MainWindow::on_newRf1ModuleInfo()
     {
         m_ui->btn_rf1_51->setVisible(false);
         m_ui->btn_rf1_58->setVisible(false);
+        qDebug() << "24 AL RF1";
 
     }
     else
     {
         qDebug("RF1 is 006");
+        qDebug() << "58 AL RF1";
         m_rf1_006 = true;
     }
 }
@@ -89,12 +91,14 @@ void MainWindow::newRF2Explorer(RFExplorer* device)
         double startFreq = 2400000;
         double endFreq = 2500000;
         emit newRf2Frequency(startFreq,endFreq);
+        qDebug() << "24 AL RF2";
     }
 
     else {
         double startFreq = 5800000;
         double endFreq = 5900000;
         emit newRf2Frequency(startFreq,endFreq);
+        qDebug() << "58 AL RF2";
     }
 
 }
