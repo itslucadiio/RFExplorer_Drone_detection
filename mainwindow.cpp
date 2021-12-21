@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
 {
     m_ui->setupUi(this);
-    //QMainWindow::showFullScreen();
+    QMainWindow::showFullScreen();
     resetPlots();
 
     m_ui->lbl_rf1_alert->setVisible(false);
