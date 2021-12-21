@@ -101,6 +101,10 @@ private:
     QCPGraph* m_spectrumGraph2;
     QCPGraph* m_spectrumGraph3;
 
+    // Max values graph
+    QCPGraph* m_maxSpectrumGraph1;
+    QCPGraph* m_maxSpectrumGraph2;
+
     // threshold graph (line)
     QCPGraph* m_rf1ThresholdGraph;
     QCPGraph* m_rf2ThresholdGraph;
@@ -111,6 +115,13 @@ private:
 
     bool m_lbl_rf1_alert_visible = false;
     bool m_lbl_rf2_alert_visible = false;
+
+    // Max values
+    QVector<float> m_maxPower1;
+    QVector<float> m_maxPower2;
+
+    bool m_rf1_006 = false;
+
 
 };
 #endif // MAINWINDOW_H

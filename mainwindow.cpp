@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
 {
     m_ui->setupUi(this);
-    QMainWindow::showFullScreen();
+    //QMainWindow::showFullScreen();
     resetPlots();
 
     m_ui->lbl_rf1_alert->setVisible(false);
@@ -41,10 +41,16 @@ void MainWindow::newRF1Explorer(RFExplorer* device)
     m_rf1 = device;
     //Signals from RFExplorer
     connect(device, SIGNAL(new_config(int,int,int,int,QString)), this, SLOT(on_newRf1Config(int,int,int,int,QString)), Qt::DirectConnection);
+    connect(device, SIGNAL(new_module_info()), this, SLOT(on_newRf1ModuleInfo()), Qt::DirectConnection);
 
     //Signals from UI
     connect(this, SIGNAL(newRf1Threshold(int)),device, SLOT(edit_threshold(int)));
     connect(this, SIGNAL(newRf1Frequency(double,double)), device, SLOT(send_config(double,double)));
+
+
+    double startFreq = 5800000;
+    double endFreq = 5900000;
+    emit newRf1Frequency(startFreq,endFreq);
 
 }
 
@@ -58,8 +64,12 @@ void MainWindow::on_newRf1ModuleInfo()
     {
         m_ui->btn_rf1_51->setVisible(false);
         m_ui->btn_rf1_58->setVisible(false);
-    }else{
+
+    }
+    else
+    {
         qDebug("RF1 is 006");
+        m_rf1_006 = true;
     }
 }
 
@@ -74,6 +84,19 @@ void MainWindow::newRF2Explorer(RFExplorer* device)
     connect(this, SIGNAL(newRf2Threshold(int)),device, SLOT(edit_threshold(int)));
     connect(this, SIGNAL(newRf2Frequency(double,double)), device, SLOT(send_config(double,double)));
 
+    if(m_rf1_006)
+    {
+        double startFreq = 2400000;
+        double endFreq = 2500000;
+        emit newRf2Frequency(startFreq,endFreq);
+    }
+
+    else {
+        double startFreq = 5800000;
+        double endFreq = 5900000;
+        emit newRf2Frequency(startFreq,endFreq);
+    }
+
 }
 
 void MainWindow::on_newRf2ModuleInfo()
@@ -86,7 +109,9 @@ void MainWindow::on_newRf2ModuleInfo()
     {
         m_ui->btn_rf2_51->setVisible(false);
         m_ui->btn_rf2_58->setVisible(false);
-    }else{
+    }
+    else
+    {
         qDebug("RF2 is 006");
     }
 
@@ -100,7 +125,7 @@ void MainWindow::resetPlots()
     m_ui->rfPlot1->clearGraphs();
     m_ui->rfPlot1->clearItems();
     m_ui->rfPlot1->plotLayout()->clear();
-    m_ui->rfPlot1->setBackground(QBrush(0xFFFFFF));
+    m_ui->rfPlot1->setBackground(QBrush(QColor(220,220,220,10)));
 
     // Build axes rectangle
     QCPAxisRect* spectrumAxisRect = new QCPAxisRect(m_ui->rfPlot1);
@@ -122,11 +147,16 @@ void MainWindow::resetPlots()
     // Add current spectrum plot
     m_spectrumGraph1 = m_ui->rfPlot1->addGraph(spectrumAxisRect->axis(QCPAxis::atBottom), spectrumAxisRect->axis(QCPAxis::atLeft));
     m_spectrumGraph1->setPen(QPen(Qt::darkGreen, 2.0));
+    m_spectrumGraph1->setBrush(QBrush(0xFFFFFF));
     m_spectrumGraph1->setAntialiased(true);
 
     // Add detection threshold plot
     m_rf1ThresholdGraph = m_ui->rfPlot1->addGraph(spectrumAxisRect->axis(QCPAxis::atBottom), spectrumAxisRect->axis(QCPAxis::atLeft));
     m_rf1ThresholdGraph->setPen(QPen(Qt::red, 2.0, Qt::SolidLine));
+
+    // Max values
+    m_maxSpectrumGraph1 = m_ui->rfPlot1->addGraph(spectrumAxisRect->axis(QCPAxis::atBottom), spectrumAxisRect->axis(QCPAxis::atLeft));
+    m_maxSpectrumGraph1-> setPen(QPen(Qt::gray,1.0));
 
     // Update
     m_ui->rfPlot1->rescaleAxes();
@@ -141,7 +171,7 @@ void MainWindow::resetPlots()
     m_ui->rfPlot2->clearGraphs();
     m_ui->rfPlot2->clearItems();
     m_ui->rfPlot2->plotLayout()->clear();
-    m_ui->rfPlot2->setBackground(QBrush(0xFFFFFF));
+    m_ui->rfPlot2->setBackground(QBrush(QColor(220,220,220,10)));
 
     //***********************************************************
     QCPAxisRect* spectrumAxisRect2 = new QCPAxisRect(m_ui->rfPlot2);
@@ -163,12 +193,16 @@ void MainWindow::resetPlots()
     // Add current spectrum plot
     m_spectrumGraph2 = m_ui->rfPlot2->addGraph(spectrumAxisRect2->axis(QCPAxis::atBottom), spectrumAxisRect2->axis(QCPAxis::atLeft));
     m_spectrumGraph2->setPen(QPen(Qt::darkGreen, 2.0));
+    m_spectrumGraph2->setBrush(QBrush(0xFFFFFF));
     m_spectrumGraph2->setAntialiased(true);
 
     // Add detection threshold plot
     m_rf2ThresholdGraph = m_ui->rfPlot2->addGraph(spectrumAxisRect2->axis(QCPAxis::atBottom), spectrumAxisRect2->axis(QCPAxis::atLeft));
     m_rf2ThresholdGraph->setPen(QPen(Qt::red, 2.0, Qt::SolidLine));
 
+    // Max values
+    m_maxSpectrumGraph2 = m_ui->rfPlot2->addGraph(spectrumAxisRect2->axis(QCPAxis::atBottom), spectrumAxisRect2->axis(QCPAxis::atLeft));
+    m_maxSpectrumGraph2-> setPen(QPen(Qt::gray,1.0));
 
     // Update
     m_ui->rfPlot2->rescaleAxes();
@@ -204,7 +238,27 @@ void MainWindow::handleDrawTimerTick()
                 detectedSignalGraphData[n].key =freqsVector[n];
                 detectedSignalGraphData[n].value =powerVector[n];
             }
+
+            // Max detection block
+            QVector<QCPGraphData> detectedMaxGraph(samplesCount);
+            if(samplesCount == m_maxPower1.length()){
+                for(int i = 0; i < samplesCount; i++){
+                    if(m_maxPower1[i] < powerVector[i]){
+                        m_maxPower1[i] = powerVector[i];
+                    }
+                    detectedMaxGraph[i].key = freqsVector[i];
+                    detectedMaxGraph[i].value = m_maxPower1[i];
+                }
+            } else {
+                m_maxPower1 = powerVector;
+                for(int i = 0; i < samplesCount; i++){
+                    detectedMaxGraph[i].key = freqsVector[i];
+                    detectedMaxGraph[i].value = m_maxPower1[i];
+                }
+            }
+
             m_spectrumGraph1->data()->set(detectedSignalGraphData);
+            m_maxSpectrumGraph1->data()->set(detectedMaxGraph);
             m_ui->rfPlot1->xAxis->setRange(freqsVector.first()-1,freqsVector.last()+1);
 
         }
@@ -255,7 +309,7 @@ void MainWindow::handleDrawTimerTick()
 
     }
 
-    //Manage RFExplorer 1
+    //Manage RFExplorer 2
     if (m_rf2!=nullptr)
     {
         //Main graph
@@ -275,7 +329,26 @@ void MainWindow::handleDrawTimerTick()
                 detectedSignalGraphData[n].key =freqsVector[n];
                 detectedSignalGraphData[n].value =powerVector[n];
             }
+
+            QVector<QCPGraphData> detectedMaxGraph(samplesCount);
+            if(samplesCount == m_maxPower2.length()){
+                for(int i = 0; i < samplesCount; i++){
+                    if(m_maxPower2[i] < powerVector[i]){
+                        m_maxPower2[i] = powerVector[i];
+                    }
+                    detectedMaxGraph[i].key = freqsVector[i];
+                    detectedMaxGraph[i].value = m_maxPower2[i];
+                }
+            } else {
+                m_maxPower2 = powerVector;
+                for(int i = 0; i < samplesCount; i++){
+                    detectedMaxGraph[i].key = freqsVector[i];
+                    detectedMaxGraph[i].value = m_maxPower2[i];
+                }
+            }
+
             m_spectrumGraph2->data()->set(detectedSignalGraphData);
+            m_maxSpectrumGraph2->data()->set(detectedMaxGraph);
             m_ui->rfPlot2->xAxis->setRange(freqsVector.first()-1,freqsVector.last()+1);
 
         }
@@ -424,6 +497,7 @@ void MainWindow::on_btn_rf1_24_clicked()
 {
     double startFreq = 2400000;
     double endFreq = 2500000;
+    m_maxPower1.clear();
     emit newRf1Frequency(startFreq,endFreq);
 }
 
@@ -431,6 +505,7 @@ void MainWindow::on_btn_rf1_51_clicked()
 {
     double startFreq = 5100000;
     double endFreq = 5200000;
+    m_maxPower1.clear();
     emit newRf1Frequency(startFreq,endFreq);
 }
 
@@ -438,6 +513,7 @@ void MainWindow::on_btn_rf1_58_clicked()
 {
     double startFreq = 5800000;
     double endFreq = 5900000;
+    m_maxPower1.clear();
     emit newRf1Frequency(startFreq,endFreq);
 }
 
@@ -445,6 +521,7 @@ void MainWindow::on_btn_rf1_900_clicked()
 {
     double startFreq = 850000;
     double endFreq = 950000;
+    m_maxPower1.clear();
     emit newRf1Frequency(startFreq,endFreq);
 }
 
@@ -452,6 +529,7 @@ void MainWindow::on_btn_rf1_433_clicked()
 {
     double startFreq = 400000;
     double endFreq = 500000;
+    m_maxPower1.clear();
     emit newRf1Frequency(startFreq,endFreq);
 }
 
@@ -459,6 +537,7 @@ void MainWindow::on_btn_rf1_modify_clicked()
 {
     double startFreq = m_ui->ds_rf1_ini_freq->value()*1000;
     double endFreq = m_ui->lbl_rf1_end_freq->text().toDouble()*1000;
+    m_maxPower1.clear();
     emit newRf1Frequency(startFreq,endFreq);
 }
 
@@ -547,6 +626,7 @@ void MainWindow::on_btn_rf2_24_clicked()
 {
     double startFreq = 2400000;
     double endFreq = 2500000;
+    m_maxPower2.clear();
     emit newRf2Frequency(startFreq,endFreq);
 }
 
@@ -554,6 +634,7 @@ void MainWindow::on_btn_rf2_51_clicked()
 {
     double startFreq = 5100000;
     double endFreq = 5200000;
+    m_maxPower2.clear();
     emit newRf2Frequency(startFreq,endFreq);
 }
 
@@ -561,6 +642,7 @@ void MainWindow::on_btn_rf2_58_clicked()
 {
     double startFreq = 5800000;
     double endFreq = 5900000;
+    m_maxPower2.clear();
     emit newRf2Frequency(startFreq,endFreq);
 }
 
@@ -568,6 +650,7 @@ void MainWindow::on_btn_rf2_900_clicked()
 {
     double startFreq = 850000;
     double endFreq = 950000;
+    m_maxPower2.clear();
     emit newRf2Frequency(startFreq,endFreq);
 }
 
@@ -575,6 +658,7 @@ void MainWindow::on_btn_rf2_433_clicked()
 {
     double startFreq = 400000;
     double endFreq = 500000;
+    m_maxPower2.clear();
     emit newRf2Frequency(startFreq,endFreq);
 }
 
@@ -582,6 +666,7 @@ void MainWindow::on_btn_rf2_modify_clicked()
 {
     double startFreq = m_ui->ds_rf2_ini_freq->value()*1000;
     double endFreq = m_ui->lbl_rf2_end_freq->text().toDouble()*1000;
+    m_maxPower2.clear();
     emit newRf2Frequency(startFreq,endFreq);
 }
 
