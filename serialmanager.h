@@ -21,10 +21,7 @@ class serialManager : public QObject
 
     public slots:
         void startConnection();
-        void sendCommand(QString msg);
         void initialize(bool debug);
-        void sendConfig(double start_freq, double end_freq);
-        void editThrehold(int threshold);
 
     signals:
         //Write a message to log
@@ -38,7 +35,6 @@ class serialManager : public QObject
         void active_detections(QVector<Detection> detections);
         void newRF1Explorer(RFExplorer* rf_device);
         void newRF2Explorer(RFExplorer* rf_device);
-        void newRF3Explorer(RFExplorer* rf_device);
 
     private:
         QVector<QSerialPort*> rf;
@@ -47,8 +43,6 @@ class serialManager : public QObject
 
         //Debug flag
         bool m_debug;
-
-        void decode_sweep(QByteArray data);
 
         QVector<RFExplorer*> m_devices;
 

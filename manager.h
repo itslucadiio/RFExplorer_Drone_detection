@@ -13,24 +13,30 @@ class manager : public QObject
     Q_OBJECT
 public:
     explicit manager(QObject *parent = nullptr);
-    //void start_rf();
+
+    QByteArray getRF1JSONData();
+    QByteArray getRF2JSONData();
+    QByteArray getRFJSONStatus();
+    bool changeRF1Threshold(QJsonObject json);
+    bool changeRF2Threshold(QJsonObject json);
+    bool restoreRF1MaxPowers();
+    bool restoreRF2MaxPowers();
+    bool changeRF1RightFreq(QJsonObject json);
+    bool changeRF1LeftFreq(QJsonObject json);
+    bool changeRF1Freq24();
+    bool changeRF1Freq58();
+    bool changeRF2RightFreq(QJsonObject json);
+    bool changeRF2LeftFreq(QJsonObject json);
+    bool changeRF2Freq24();
+    bool changeRF2Freq58();
 
 public slots:
     void initialize(QVariantMap* parameters, bool debug);
-    //void sendConfig(double start_freq, double end_freq);
-    //void editThrehold(int threshold);
 
 signals:
     //Write a message to log
     void log(const QString& text);
     void newRFExplorer(RFExplorer* device);
-
-    //void sendMessage(QString msg);
-
-    //void new_config(double start_freq, double end_freq);
-    //void new_serial(QString serial);
-    //void powers_freqs(QVector<float> powerVector, QVector<double> freqsVector);
-    //void active_detections(QVector<Detection> detections);
 
 private:
 

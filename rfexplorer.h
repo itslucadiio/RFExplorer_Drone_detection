@@ -5,6 +5,9 @@
 #include <QSerialPort>
 #include <QDebug>
 #include <QThread>
+#include <iostream>
+#include <string>
+#include <algorithm>
 #include "utils.h"
 
 

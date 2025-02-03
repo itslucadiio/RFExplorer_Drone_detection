@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     , m_ui(new Ui::MainWindow)
 {
     m_ui->setupUi(this);
-    QMainWindow::showFullScreen();
+    //QMainWindow::showFullScreen();
     resetPlots();
 
     m_ui->lbl_rf1_alert->setVisible(false);
@@ -17,10 +17,27 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 
     //Create plots update timer
     m_drawTimer = new QTimer(this);
-    m_drawTimer->setInterval(1000.0 /10.0);
     m_drawTimer->setTimerType(Qt::PreciseTimer);
+    m_drawTimer->setInterval(1000.0 /10.0);
     connect(m_drawTimer,SIGNAL(timeout()),this,SLOT(handleDrawTimerTick()));
     m_drawTimer->start();
+
+    //Status timer
+    m_statusTimer = new QTimer(this);
+    m_statusTimer->setTimerType(Qt::PreciseTimer);
+    m_statusTimer->setInterval(m_statusInterval);
+    connect(m_statusTimer,SIGNAL(timeout()),this,SLOT(handeStatusTimerTick()));
+    m_statusTimer->start();
+
+    // setting up sound alarms
+    m_rf1_alarm = new QSoundEffect();
+    m_rf1_alarm->setSource(QUrl("qrc:/alarm.wav"));
+    m_rf1_alarm->setLoopCount(QSoundEffect::Infinite);
+    m_rf1_alarm->setVolume(0.75f);
+    m_rf2_alarm = new QSoundEffect();
+    m_rf2_alarm->setSource(QUrl("qrc:/alarm.wav"));
+    m_rf2_alarm->setLoopCount(QSoundEffect::Infinite);
+    m_rf2_alarm->setVolume(0.75f);
 
     QTimer::singleShot(20000, [this](){
         m_ui->gb_rf1->setVisible(true);
@@ -34,13 +51,197 @@ MainWindow::~MainWindow()
     //Cleanup allocated resources
     delete m_drawTimer;
     delete m_ui;
+    delete m_rf1_alarm;
+    delete m_rf2_alarm;
+    m_rf1_connected = false;
+    m_rf1_connected = false;
+    m_rf1_muted = false;
+}
+
+QJsonObject MainWindow::getRF1JSONChartdata()
+{
+
+    QJsonObject powerValues;
+    QJsonValue power;
+    for (int i=0; i < m_rf1_powerVector.size(); i++)
+    {
+        power = QJsonValue(m_rf1_powerVector.at(i));
+        powerValues.insert( QString::number(i), power );
+    }
+
+    QJsonObject freqValues;
+    QJsonValue freqs;
+    for (int j=0; j < m_rf1_freqsVector.size(); j++)
+    {
+        freqs = QJsonValue(m_rf1_freqsVector.at(j));
+        freqValues.insert( QString::number(j), freqs );
+    }
+
+    QJsonObject maxPowerValues;
+    QJsonValue maxPower;
+    for (int i=0; i < m_maxPower1.size(); i++)
+    {
+        maxPower = QJsonValue(m_maxPower1.at(i));
+        maxPowerValues.insert( QString::number(i), maxPower );
+    }
+
+    QJsonObject values;
+    values.insert("powers", powerValues);
+    values.insert("max_powers", maxPowerValues);
+    values.insert("freqs", freqValues);
+    return values;
+}
+
+QJsonObject MainWindow::getRF2JSONChartdata()
+{
+    QJsonObject powerValues;
+    QJsonValue power;
+    for (int i=0; i < m_rf2_powerVector.size(); i++)
+    {
+        power = QJsonValue(m_rf2_powerVector.at(i));
+        powerValues.insert( QString::number(i), power );
+    }
+
+    QJsonObject freqValues;
+    QJsonValue freqs;
+    for (int j=0; j < m_rf2_freqsVector.size(); j++)
+    {
+        freqs = QJsonValue(m_rf2_freqsVector.at(j));
+        freqValues.insert( QString::number(j), freqs );
+    }
+
+    QJsonObject maxPowerValues;
+    QJsonValue maxPower;
+    for (int i=0; i < m_maxPower2.size(); i++)
+    {
+        maxPower = QJsonValue(m_maxPower2.at(i));
+        maxPowerValues.insert( QString::number(i), maxPower );
+    }
+
+    QJsonObject values;
+    values.insert("powers", powerValues);
+    values.insert("max_powers", maxPowerValues);
+    values.insert("freqs", freqValues);
+    return values;
+}
+
+bool MainWindow::changeRF1Threshold(QJsonObject response)
+{
+    if (response.contains("threshold")){
+        m_rf1_threshold=response.value("threshold").toString().toInt();
+        updateRf1Threshold(m_rf1_threshold);
+        emit newRf1Threshold(m_rf1_threshold);
+        return true;
+    }
+    return false;
+}
+
+bool MainWindow::changeRF2Threshold(QJsonObject response)
+{
+    if (response.contains("threshold")){
+        m_rf2_threshold=response.value("threshold").toString().toInt();
+        updateRf2Threshold(m_rf2_threshold);
+        emit newRf2Threshold(m_rf2_threshold);
+        return true;
+    }
+    return false;
+}
+
+bool MainWindow::restoreRF1MaxPowers()
+{
+    on_btn_rf1_max_spec_rst_clicked();
+    return true;
+}
+
+bool MainWindow::restoreRF2MaxPowers()
+{
+    on_btn_rf2_max_spec_rst_clicked();
+    return true;
+}
+
+bool MainWindow::changeRF1RightFrequency(QJsonObject response)
+{
+    if (response.contains("frequency"))
+    {
+        int startFreq = (int) ( response.value("frequency").toString().toDouble() * 1000);
+        int endFreq = startFreq + 100000;
+        m_maxPower1.clear();
+        emit newRf1Frequency((double) startFreq,(double) endFreq);
+        return true;
+    }
+    return false;
+}
+
+bool MainWindow::changeRF1LeftFrequency(QJsonObject response)
+{
+    if (response.contains("frequency"))
+    {
+        int startFreq = (int) ( response.value("frequency").toString().toDouble() * 1000);
+        int endFreq = startFreq - 100000;
+        m_maxPower1.clear();
+        emit newRf1Frequency((double)endFreq,(double)startFreq);
+        return true;
+    }
+    return false;
+}
+
+bool MainWindow::changeRF1Freq24()
+{
+    on_btn_rf1_24_clicked();
+    return true;
+}
+
+bool MainWindow::changeRF1Freq58()
+{
+    on_btn_rf1_58_clicked();
+    return true;
+}
+
+bool MainWindow::changeRF2RightFrequency(QJsonObject response)
+{
+    if (response.contains("frequency"))
+    {
+        int startFreq = (int) ( response.value("frequency").toString().toDouble() * 1000);
+        int endFreq = startFreq + 100000;
+        m_maxPower2.clear();
+        emit newRf2Frequency((double) startFreq,(double) endFreq);
+        return true;
+    }
+    return false;
+}
+
+bool MainWindow::changeRF2LeftFrequency(QJsonObject response)
+{
+    if (response.contains("frequency"))
+    {
+        int startFreq = (int) ( response.value("frequency").toString().toDouble() * 1000);
+        int endFreq = startFreq - 100000;
+        m_maxPower2.clear();
+        emit newRf2Frequency((double)endFreq,(double)startFreq);
+        return true;
+    }
+    return false;
+}
+
+bool MainWindow::changeRF2Freq24()
+{
+    on_btn_rf2_24_clicked();
+    return true;
+}
+
+bool MainWindow::changeRF2Freq58()
+{
+    on_btn_rf2_58_clicked();
+    return true;
 }
 
 void MainWindow::newRF1Explorer(RFExplorer* device)
 {
     m_rf1 = device;
+    m_rf1_connected = true;
     //Signals from RFExplorer
     connect(device, SIGNAL(new_config(int,int,int,int,QString)), this, SLOT(on_newRf1Config(int,int,int,int,QString)), Qt::DirectConnection);
+    connect(device, SIGNAL(new_serial(QString)), this, SLOT(on_newRf1Serial(QString)), Qt::DirectConnection);
     connect(device, SIGNAL(new_module_info()), this, SLOT(on_newRf1ModuleInfo()), Qt::DirectConnection);
 
     //Signals from UI
@@ -70,8 +271,10 @@ void MainWindow::on_newRf1ModuleInfo()
 void MainWindow::newRF2Explorer(RFExplorer* device)
 {
     m_rf2 = device;
+    m_rf2_connected = true;
     //Signals from RFExplorer
     connect(device, SIGNAL(new_config(int,int,int,int,QString)), this, SLOT(on_newRf2Config(int,int,int,int,QString)), Qt::DirectConnection);
+    connect(device, SIGNAL(new_serial(QString)), this, SLOT(on_newRf2Serial(QString)), Qt::DirectConnection);
     connect(device, SIGNAL(new_module_info()), this, SLOT(on_newRf2ModuleInfo()), Qt::DirectConnection);
 
     //Signals from UI
@@ -102,6 +305,7 @@ void MainWindow::on_newRf2ModuleInfo()
 void MainWindow::resetPlots()
 {
     //***********************************************************
+    // RF1 PLOT
     // Cleanup all plots
     m_ui->rfPlot1->clearGraphs();
     m_ui->rfPlot1->clearItems();
@@ -135,7 +339,7 @@ void MainWindow::resetPlots()
     m_rf1ThresholdGraph = m_ui->rfPlot1->addGraph(spectrumAxisRect->axis(QCPAxis::atBottom), spectrumAxisRect->axis(QCPAxis::atLeft));
     m_rf1ThresholdGraph->setPen(QPen(Qt::red, 2.0, Qt::SolidLine));
 
-    // Max values
+    // Add max values threshold plot
     m_maxSpectrumGraph1 = m_ui->rfPlot1->addGraph(spectrumAxisRect->axis(QCPAxis::atBottom), spectrumAxisRect->axis(QCPAxis::atLeft));
     m_maxSpectrumGraph1-> setPen(QPen(Qt::gray,1.0));
 
@@ -181,7 +385,7 @@ void MainWindow::resetPlots()
     m_rf2ThresholdGraph = m_ui->rfPlot2->addGraph(spectrumAxisRect2->axis(QCPAxis::atBottom), spectrumAxisRect2->axis(QCPAxis::atLeft));
     m_rf2ThresholdGraph->setPen(QPen(Qt::red, 2.0, Qt::SolidLine));
 
-    // Max values
+    // Add max values threshold plot
     m_maxSpectrumGraph2 = m_ui->rfPlot2->addGraph(spectrumAxisRect2->axis(QCPAxis::atBottom), spectrumAxisRect2->axis(QCPAxis::atLeft));
     m_maxSpectrumGraph2-> setPen(QPen(Qt::gray,1.0));
 
@@ -203,10 +407,10 @@ void MainWindow::handleDrawTimerTick()
     if (m_rf1!=nullptr)
     {
         //Main graph
-
-        QVector<float> powerVector =m_rf1->getPowerVector();
-        QVector<double> freqsVector = m_rf1->getFreqsVector();
-
+        m_rf1_powerVector = m_rf1->getPowerVector();
+        m_rf1_freqsVector = m_rf1->getFreqsVector();
+        QVector<float> powerVector = m_rf1_powerVector;  //Copy to manage data
+        QVector<double> freqsVector = m_rf1_freqsVector;
 
         //Verify vectors data coherence
         if((!powerVector.isEmpty() && !freqsVector.isEmpty()) && (powerVector.size() == freqsVector.size()))
@@ -273,10 +477,12 @@ void MainWindow::handleDrawTimerTick()
             {
                 m_ui->lbl_rf1_alert->setVisible(true);
                 m_lbl_rf1_alert_visible = true;
+                m_rf1_alarm->play();
 
                 QTimer::singleShot(10000, [this](){
                     m_ui->lbl_rf1_alert->setVisible(false);
                     m_lbl_rf1_alert_visible = false;
+                    m_rf1_alarm->stop();
                 });
             }
         }
@@ -301,9 +507,10 @@ void MainWindow::handleDrawTimerTick()
     if (m_rf2!=nullptr)
     {
         //Main graph
-
-        QVector<float> powerVector =m_rf2->getPowerVector();
-        QVector<double> freqsVector = m_rf2->getFreqsVector();
+        m_rf2_powerVector = m_rf2->getPowerVector();
+        m_rf2_freqsVector = m_rf2->getFreqsVector();
+        QVector<float> powerVector = m_rf2_powerVector;
+        QVector<double> freqsVector = m_rf2_freqsVector;
 
 
         //Verify vectors data coherence
@@ -371,10 +578,12 @@ void MainWindow::handleDrawTimerTick()
             {
                 m_ui->lbl_rf2_alert->setVisible(true);
                 m_lbl_rf2_alert_visible = true;
+                m_rf2_alarm->play();
 
                 QTimer::singleShot(10000, [this](){
                     m_ui->lbl_rf2_alert->setVisible(false);
                     m_lbl_rf2_alert_visible = false;
+                    m_rf2_alarm->stop();
                 });
             }
         }
@@ -396,6 +605,34 @@ void MainWindow::handleDrawTimerTick()
 
 }
 
+void MainWindow::handeStatusTimerTick()
+{
+    QJsonObject rf1status;
+    rf1status.insert("connected", m_rf1_connected);
+    rf1status.insert("sn",m_rf1_serial);
+    rf1status.insert("threshold",m_rf1_threshold);
+    rf1status.insert("module",m_rf1_module);
+    rf1status.insert("module_ext",m_rf1_module_ext);
+    rf1status.insert("fw_version",m_rf1_fw_ver.trimmed());
+    rf1status.insert("alarm",m_lbl_rf1_alert_visible);
+    rf1status.insert("audio",m_rf1_muted);
+
+    QJsonObject rf2status;
+    rf2status.insert("connected", m_rf2_connected);
+    rf2status.insert("sn",m_rf2_serial);
+    rf2status.insert("threshold",m_rf2_threshold);
+    rf2status.insert("module",m_rf2_module);
+    rf2status.insert("module_ext",m_rf2_module_ext);
+    rf2status.insert("fw_version",m_rf2_fw_ver.trimmed());
+    rf2status.insert("alarm",m_lbl_rf2_alert_visible);
+    rf2status.insert("audio",m_rf2_muted);
+
+    QJsonObject values;
+    values.insert("rf1", rf1status);
+    values.insert("rf2",rf2status);
+    m_status = values;
+}
+
 void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size, int threshold, QString sn)
 {
     int bw = sweep_steps * step_size;
@@ -410,7 +647,11 @@ void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size,
     m_ui->lbl_rf1_freq_min->setText(QString::number(m_rf1_start_freq));
     m_ui->lbl_rf1_freq_max->setText(QString::number(m_rf1_end_freq));
     m_ui->vslider_rf1->setValue(m_rf1_threshold);
-    m_ui->lbl_rf1_serialnumber->setText(sn);
+    if (sn != "")
+    {
+        m_rf1_serial = sn;
+        m_ui->lbl_rf1_serialnumber->setText(sn);
+    }
 
     //Update Graph params
     updateRf1Threshold(m_rf1_threshold);
@@ -418,6 +659,15 @@ void MainWindow::on_newRf1Config(int start_freq, int sweep_steps, int step_size,
     //m_ui->rfPlot1->rescaleAxes();
     //m_ui->rfPlot1->replot();
 
+}
+
+void MainWindow::on_newRf1Serial(QString sn)
+{
+    if (sn != "")
+    {
+        m_rf1_serial = sn;
+        m_ui->lbl_rf1_serialnumber->setText(sn);
+    }
 }
 
 void on_newRf1ModuleInfo()
@@ -444,7 +694,11 @@ void MainWindow::on_newRf2Config(int start_freq, int sweep_steps, int step_size,
     m_ui->lbl_rf2_freq_min->setText(QString::number(m_rf2_start_freq));
     m_ui->lbl_rf2_freq_max->setText(QString::number(m_rf2_end_freq));
     m_ui->vslider_rf2->setValue(m_rf2_threshold);
-    m_ui->lbl_rf2_serialnumber->setText(sn);
+    if (sn != "")
+    {
+        m_rf2_serial = sn;
+        m_ui->lbl_rf2_serialnumber->setText(sn);
+    }
 
     //Update Graph params
     updateRf2Threshold(m_rf2_threshold);
@@ -452,6 +706,15 @@ void MainWindow::on_newRf2Config(int start_freq, int sweep_steps, int step_size,
     //m_ui->rfPlot1->rescaleAxes();
     //m_ui->rfPlot1->replot();
 
+}
+
+void MainWindow::on_newRf2Serial(QString sn)
+{
+    if (sn != "")
+    {
+        m_rf2_serial = sn;
+        m_ui->lbl_rf2_serialnumber->setText(sn);
+    }
 }
 
 // RF1 SIDEBAR CONTROLS
@@ -665,5 +928,55 @@ void MainWindow::on_btn_rf2_modify_clicked()
     emit newRf2Frequency(startFreq,endFreq);
 }
 
+void MainWindow::on_btn_rf1_max_spec_rst_clicked()
+{
+    m_maxPower1.clear();
+    m_maxSpectrumGraph1->data()->clear();
+    m_ui->rfPlot1->replot();
+}
 
+void MainWindow::on_btn_rf2_max_spec_rst_clicked()
+{
+    m_maxPower2.clear();
+    m_maxSpectrumGraph2->data()->clear();
+    m_ui->rfPlot2->replot();
+}
+
+void MainWindow::on_btn_rf1_audio_control_clicked()
+{
+    if (m_rf1_alarm->isMuted() == true)
+    {
+        m_rf1_alarm->setMuted(false);
+        m_ui->btn_rf1_audio_control->setIcon(QIcon(":/audio.svg"));
+        m_rf1_muted = false;
+    }
+    else if (m_rf1_alarm->isMuted() == false)
+    {
+        m_rf1_alarm->setMuted(true);
+        m_ui->btn_rf1_audio_control->setIcon(QIcon(":/audio-muted.svg"));
+        m_rf1_muted = true;
+    }
+}
+
+void MainWindow::on_btn_rf2_audio_control_clicked()
+{
+    if (m_rf2_alarm->isMuted() == true)
+    {
+        m_rf2_alarm->setMuted(false);
+        m_ui->btn_rf2_audio_control->setIcon(QIcon(":/audio.svg"));
+        m_rf2_muted = false;
+    }
+    else if (m_rf2_alarm->isMuted() == false)
+    {
+        m_rf2_alarm->setMuted(true);
+        m_ui->btn_rf2_audio_control->setIcon(QIcon(":/audio-muted.svg"));
+        m_rf2_muted = true;
+    }
+
+}
+
+const QJsonObject &MainWindow::status() const
+{
+    return m_status;
+}
 

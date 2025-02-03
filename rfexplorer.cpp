@@ -13,8 +13,6 @@ void RFExplorer::initialize(QSerialPort* port, bool debug)
     m_debug = debug;
     startConnection();
 
-
-
 }
 
 void RFExplorer::startConnection()
@@ -28,8 +26,6 @@ void RFExplorer::startConnection()
         QThread::sleep(10);
         sendCommand("C0");         //Request config datas
 
-        //QThread::sleep(5);
-        //sendCommand("GO");         //Start sweeper
     }
 }
 
@@ -61,6 +57,7 @@ void RFExplorer::read_data()
         const QByteArray data = serial_port->readLine();
 
         QString stringData = QString(data);
+        qDebug() << "DATA: " << stringData;
 
         if (stringData.contains("(C) Ariel Rocholl"))
         {
@@ -76,9 +73,7 @@ void RFExplorer::read_data()
             m_fw_version = modulelist[2];
 
             emit new_module_info();
-
-
-            qDebug() << "MODULE: " << dataString;
+            //qDebug() << "MODULE: " << dataString;
         }
         //Configuration params
         if (stringData.contains("#C2-F:"))
@@ -125,6 +120,7 @@ void RFExplorer::read_data()
             setSerial_number(stringData.split("Sn")[1].trimmed());
             //emit signal with config
             emit new_serial(getSerial_number());
+            if (m_debug) emit log(QString("[serialManager.read_data] New Serial Number received."));
         }
 
         //Data
@@ -141,8 +137,6 @@ void RFExplorer::read_data()
 
             double sweep_start = this->getStart_Freq()/1e3;
             double sweep_step = this->getFreq_step()/1e6;
-            //double sweep_end = sweep_start + (sweep_step * this->getSweep_Steps() * 0.999999);
-            //double slope = abs((this->getAmp_Bottom() - this->getAmp_Top()))/255.0;
 
             //POWERS DATA BLOCK
             //----------------------------------------------------------------------------
@@ -192,7 +186,7 @@ void RFExplorer::read_data()
             _detections = m_detections; //Cloning to manage data
 
             for (int j = 0; j < highFreq.length(); ++j) {
-                bool encontrado = false;
+                bool found = false;
                 if(_detections.length() == 0)
                 {
                     _detections.append({highFreq[j], highPower[j], 0});
@@ -201,9 +195,9 @@ void RFExplorer::read_data()
                 {
                     for (int i = 0; i < _detections.length(); ++i) {
                         if(_detections[i].freq == highFreq[j])
-                            encontrado = true;
+                            found = true;
                     }
-                    if(!encontrado)
+                    if(!found)
                         _detections.append({highFreq[j],highPower[j],0});
                 }
             }
@@ -227,7 +221,7 @@ void RFExplorer::read_data()
                 }
             }
 
-            m_detections = _detections; //Set new values (Hope not mutex needed)
+            m_detections = _detections; //Set new values
 
         }
     }
@@ -282,22 +276,22 @@ void RFExplorer::send_config(double start_freq, double end_freq)
 
 
     QString data;
-    //data.append("#");
-    //data.append(char(0x20));
     data.append("C2-F:");
 
     if (_start_freq.length()<7)
     {
+        std::string sta = _start_freq.toStdString();
         int diff_0 = 7-_start_freq.length();
-        const QChar zero =QChar(48);
-        _start_freq.insert(0,&zero,diff_0);
+        sta.insert(0,diff_0,'0');
+        _start_freq= QString::fromStdString(sta);
     }
 
     if (_end_freq.length()<7)
     {
+        std::string str = _end_freq.toStdString();
         int diff_0 = 7-_end_freq.length();
-        const QChar zero =QChar(48);
-        _end_freq.insert(0,&zero,diff_0);
+        str.insert(0,diff_0,'0');
+        _end_freq= QString::fromStdString(str);
     }
 
     data.append(_start_freq);
@@ -325,7 +319,7 @@ void RFExplorer::edit_threshold(int threshold)
 
 //------------------------------------------------------------------------------------------------------------------------------------
 //GETTERS AND SETTERS
-//----------------------------------------------------------------------------255--------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------
 
 QVector<float> RFExplorer::getPowerVector()
 {

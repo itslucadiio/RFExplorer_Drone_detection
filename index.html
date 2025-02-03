@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
+
+<style>
+    #showroom {
+        background-color:#FFF;
+        /*border: 1px solid;
+        border-color: #2C3F9B;
+        border-radius: 15px;*/
+        min-height: 150px;
+        font-size: 17px;
+        padding: 20px;
+        text-transform: capitalize;
+    }
+
+    input[type=range][orient=vertical]
+    {
+        writing-mode: bt-lr; /* IE */
+        -webkit-appearance: slider-vertical; /* Chromium */
+        width: 8px;
+        height: 40vh;
+        padding: 0 5px;
+    }
+</style>
+
+</head>
+
+<body>
+<div class="main">
+<audio id="rf1_sound_alarm"><source src="/sfx/alarm.mp3" type="audio/mp3"></audio>
+<audio id="rf2_sound_alarm"><source src="/sfx/alarm.mp3" type="audio/mp3"></audio>
+
+    <div class="container col-12">
+        <div id="showroom" class="col-12">
+            <div class="row">
+                <div class="col-11" style="height:46vh">
+                    <canvas id="rf1_Chart"></canvas>
+                </div>
+                <div class="col-1">
+                    <div class="row">
+                        <div class="col-4">
+                            <div><span>&#x200b</span></div>
+                            <div><input type="range" orient="vertical" id="rf1_threshold_selector" name="rf1ThresholdSelector" min="-100" max="-20"></div>
+                            <div><span>&#x200b</span></div>
+                        </div>
+                        <div class="col-8">
+                            <div><span>&#x200b</span></div>
+                            <button type="button" class="btn btn-outline-primary" onclick="restoreRF1MaxPowers()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                  <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                                  <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                                </svg>
+                            </button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" id="rf1_audio_on_button" class="btn btn-outline-primary" onclick="updateRF1AudioSettings()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-volume-up-fill" viewBox="0 0 16 16">
+                                  <path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/>
+                                  <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z"/>
+                                  <path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/>
+                                </svg>
+                            </button>
+                            <button type="button" id="rf1_audio_off_button" class="btn btn-outline-primary" onclick="updateRF1AudioSettings()" style="display:none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-volume-mute-fill" viewBox="0 0 16 16">
+                                  <path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06zm7.137 2.096a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" class="btn btn-outline-primary" onclick="changeRF1RightFreq()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+                                  <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                                </svg>
+                            </button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" class="btn btn-outline-primary" onclick="changeRF1LeftFreq()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
+                                  <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                                </svg>
+                            </button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" class="btn btn-outline-primary" onclick="changeRF1Freq24()">24</button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" id="rf1_58_button" class="btn btn-outline-primary" onclick="changeRF1Freq58()" style="display:none">58</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-11" style="height:46vh">
+                    <canvas id="rf2_Chart"></canvas>
+                </div>
+                <div class="col-1">
+                    <div class="row">
+                        <div class="col-4">
+                            <div><span>&#x200b</span></div>
+                            <div><input type="range" orient="vertical" id="rf2_threshold_selector" name="rf2ThresholdSelector" min="-100" max="-20"></div>
+                            <div><span>&#x200b</span></div>
+                        </div>
+                        <div class="col-8">
+                            <div><span>&#x200b</span></div>
+                            <button type="button" class="btn btn-outline-primary" onclick="restoreRF2MaxPowers()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                  <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                                  <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                                </svg>
+                            </button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" id="rf2_audio_on_button" class="btn btn-outline-primary" onclick="updateRF2AudioSettings()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-volume-up-fill" viewBox="0 0 16 16">
+                                  <path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/>
+                                  <path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.483 5.483 0 0 1 11.025 8a5.483 5.483 0 0 1-1.61 3.89l.706.706z"/>
+                                  <path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/>
+                                </svg>
+                            </button>
+                            <button type="button" id="rf2_audio_off_button" class="btn btn-outline-primary" onclick="updateRF2AudioSettings()" style="display:none">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-volume-mute-fill" viewBox="0 0 16 16">
+                                  <path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06zm7.137 2.096a.5.5 0 0 1 0 .708L12.207 8l1.647 1.646a.5.5 0 0 1-.708.708L11.5 8.707l-1.646 1.647a.5.5 0 0 1-.708-.708L10.793 8 9.146 6.354a.5.5 0 1 1 .708-.708L11.5 7.293l1.646-1.647a.5.5 0 0 1 .708 0z"/>
+                                </svg>
+                            </button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" class="btn btn-outline-primary" onclick="changeRF2RightFreq()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
+                                  <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+                                </svg>
+                            </button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" class="btn btn-outline-primary" onclick="changeRF2LeftFreq()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
+                                  <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+                                </svg>
+                            </button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" class="btn btn-outline-primary" onclick="changeRF2Freq24()">24</button>
+                            <div><span>&#x200b</span></div>
+                            <button type="button" id="rf2_58_button" class="btn btn-outline-primary" onclick="changeRF2Freq58()" style="display:none">58</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+<script>
+$(document).ready(function(){
+
+    window.setInterval( () => getDevicesState(), 1000);
+
+    $('#rf1_threshold_selector').change(function(){
+        var _threshold_value_rf1 = $(this).val();
+        updateRF1Threshold(_threshold_value_rf1);
+    });
+
+    $('#rf2_threshold_selector').change(function(){
+        var _threshold_value_rf2 = $(this).val();
+        updateRF2Threshold(_threshold_value_rf2);
+    });
+
+});
+
+//------ RF1 CHART CREATION & VARIABLES------//
+var rf1_serial = "";
+var rf1_threshold = 0;
+var rf1_module = "";
+var rf1_module_ext = "";
+var rf1_fw_version = "";
+var rf1_thresholdArray;
+var rf1_alarm = false;
+var rf1_audio = false;
+var rf1_start_freq = 0;
+var rf1_end_freq = 0;
+
+var rf1x_chart = document.getElementById("rf1_Chart").getContext("2d");
+const rf1_chart = new Chart(rf1x_chart, {
+  type: "line",
+  data: {
+    labels: [],
+    datasets: [{
+      fill: false,
+      lineTension: 0.5,
+      backgroundColor: "rgba(44,63,155,0.7)",
+      borderColor: "rgba(44,63,155,0.7)",
+      borderJoinStyle: 'round',
+      pointRadius: 0,
+      data: [],
+      yAxisID: 'y1',
+    },
+    {
+      fill: false,
+      lineTension: 0,
+      backgroundColor: "rgba(255,0,0,0.5)",
+      borderColor: "rgba(255,0,0,0.5)",
+      pointRadius: 0,
+      data: [],
+      yAxisID: 'y2',
+    },
+    {
+      fill: false,
+      lineTension: 0.5,
+      backgroundColor: "rgba(2220,220,220,0.5)",
+      borderColor: "rgba(220,220,220,0.5)",
+      borderJoinStyle: 'round',
+      pointRadius: 0,
+      data: [],
+      yAxisID: 'y3',
+    }]
+  },
+  options: {
+    legend: {display: false},
+    scales: {y1:{max:-20, min:-100, display: false}, y2:{max:-20, min:-100, display: false}, y3:{max:-20, min:-100}},
+    maintainAspectRatio: false
+  }
+});
+var rf1_sound_alarm = document.getElementById("rf1_sound_alarm");
+
+function getRF1ChartData(){
+  $.ajax({
+    type: "GET",
+    url: "/api/charts/rf1",
+    dataType: 'json',
+    success: function(result){
+        try {
+
+            //------ CREATE ARRAY ------//
+            var freqs_array = [];
+            var freqs = result.freqs;
+            for (var freq in freqs){
+                freqs_array.push(freqs[freq].toFixed(2));
+            }
+            rf1_start_freq = freqs_array[0];
+            rf1_end_freq = freqs_array[freqs_array.length - 1];
+            var powers_array = [];
+            var powers = result.powers;
+            for (var power in powers){
+                powers_array.push(powers[power]);
+            }
+            var max_powers_array = [];
+            var max_powers = result.max_powers;
+            for (var max_power in max_powers){
+                max_powers_array.push(max_powers[max_power]);
+            }
+
+            //------ UPDATE GRAPH ------//
+            rf1_chart.data.labels = freqs_array;
+            rf1_chart.data.datasets[0].data = powers_array;
+            rf1_chart.data.datasets[0].label = rf1_serial;
+            rf1_thresholdArray = new Array(freqs_array.length).fill(rf1_threshold);
+            rf1_chart.data.datasets[1].data = rf1_thresholdArray;
+            rf1_chart.data.datasets[1].label = String(rf1_threshold);
+            document.getElementById("rf1_threshold_selector").value = String(rf1_threshold);
+            rf1_chart.data.datasets[2].data = max_powers_array;
+            rf1_chart.data.datasets[2].label = "Max Values";
+            rf1_chart.options.scales = {y1:{max:-20, min:-100, display: false}, y2:{max:-20, min:-100, display: false}, y3:{max:-20, min:-100}};
+            if (rf1_alarm==true){
+                $('#rf1_Chart').css('backgroundColor', 'rgba(255, 0, 0, 0.2)');
+                playAudio(rf1_sound_alarm);
+            }else{
+                $('#rf1_Chart').css('backgroundColor', 'rgba(0, 0, 0, 0)');
+                stopAudio(rf1_sound_alarm);
+            }
+            if(rf1_audio==true){
+                muteAudio(rf1_sound_alarm);
+                $('#rf1_audio_on_button').css('display', 'none'); $('#rf1_audio_off_button').css('display', 'block');
+            }else{
+                unmuteAudio(rf1_sound_alarm);
+                $('#rf1_audio_on_button').css('display', 'block'); $('#rf1_audio_off_button').css('display', 'none');
+            }
+            if(rf1_module=="006"){$('#rf1_58_button').css('display', 'block');}
+            else{$('#rf1_58_button').css('display', 'none');}
+            rf1_chart.update();
+
+        } catch { console.log("Something wrong happend at getRF1ChartData!"); }
+    }
+  })
+};
+
+function updateRF1Threshold(_threshold){
+
+    //POST  New Threshold
+    var data = {'threshold': _threshold};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/threshold/rf1",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success == "true"){
+                //const str = "Threshold Updated correclty with selected value: " + String(_threshold) + ".\nWait for backend to update..."
+                //alert(str);
+            } else {
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function restoreRF1MaxPowers(){
+    //POST Request
+    var data = {'restore': 'true'};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/restore/rf1",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function updateRF1AudioSettings(){
+    if (rf1_audio==true){
+        rf1_audio=false;
+    }else{
+        rf1_audio=true;
+    }
+}
+
+function changeRF1RightFreq(){
+    //POST Request
+    var data = {'frequency': String(rf1_end_freq)};
+    console.log(data);
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/frequency/right/rf1",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function changeRF1LeftFreq(){
+    //POST Request
+    var data = {'frequency': String(rf1_start_freq)};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/frequency/left/rf1",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function changeRF1Freq24(){
+    //POST Request
+    var data = {'frequency': 'true'};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/frequency/24/rf1",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function changeRF1Freq58(){
+    //POST Request
+    var data = {'frequency': 'true'};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/frequency/58/rf1",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+
+//------ RF2 CHART CREATION & VARIABLES------//
+var rf2_serial = "";
+var rf2_threshold = 0;
+var rf2_module = "";
+var rf2_module_ext = "";
+var rf2_fw_version = "";
+var rf2_thresholdArray;
+var rf2_alarm = false;
+var rf2_audio = false;
+var rf2_start_freq = 0;
+var rf2_end_freq = 0;
+
+var rf2x_chart = document.getElementById("rf2_Chart").getContext("2d");
+const rf2_chart = new Chart(rf2x_chart, {
+  type: "line",
+  data: {
+    labels: [],
+    datasets: [{
+      fill: false,
+      lineTension: 0.5,
+      backgroundColor: "rgba(44,63,155,0.7)",
+      borderColor: "rgba(44,63,155,0.7)",
+      borderJoinStyle: 'round',
+      pointRadius: 0,
+      data: [],
+      yAxisID: 'y1',
+    },
+    {
+      fill: false,
+      lineTension: 0,
+      backgroundColor: "rgba(255,0,0,0.5)",
+      borderColor: "rgba(255,0,0,0.5)",
+      pointRadius: 0,
+      data: [],
+      yAxisID: 'y2',
+    },
+    {
+      fill: false,
+      lineTension: 0.5,
+      backgroundColor: "rgba(2220,220,220,0.5)",
+      borderColor: "rgba(220,220,220,0.5)",
+      borderJoinStyle: 'round',
+      pointRadius: 0,
+      data: [],
+      yAxisID: 'y3',
+    }]
+  },
+  options: {
+    legend: {display: false},
+    scales: {y1:{max:-20, min:-100, display: false}, y2:{max:-20, min:-100, display: false}, y3:{max:-20, min:-100}},
+    maintainAspectRatio: false
+  }
+});
+
+function getRF2ChartData(){
+  $.ajax({
+    type: "GET",
+    url: "/api/charts/rf2",
+    dataType: 'json',
+    success: function(result){
+        try {
+
+            //------ CREATE ARRAY ------//
+            var freqs_array = [];
+            var freqs = result.freqs;
+            for (var freq in freqs){
+                freqs_array.push(freqs[freq].toFixed(2));
+            }
+            rf2_start_freq = freqs_array[0];
+            rf2_end_freq = freqs_array[-1];
+            var powers_array = [];
+            var powers = result.powers;
+            for (var power in powers){
+                powers_array.push(powers[power]);
+            }
+            var max_powers_array = [];
+            var max_powers = result.max_powers;
+            for (var max_power in max_powers){
+                max_powers_array.push(max_powers[max_power]);
+            }
+
+            //------ UPDATE GRAPH ------//
+            rf2_chart.data.labels = freqs_array;
+            rf2_chart.data.datasets[0].data = powers_array;
+            rf2_chart.data.datasets[0].label = rf2_serial;
+            rf2_thresholdArray = new Array(freqs_array.length).fill(rf2_threshold);
+            rf2_chart.data.datasets[1].data = rf2_thresholdArray;
+            rf2_chart.data.datasets[1].label = String(rf2_threshold);
+            document.getElementById("rf2_threshold_selector").value = String(rf2_threshold);
+            rf2_chart.data.datasets[2].data = max_powers_array;
+            rf2_chart.data.datasets[2].label = "Max Values";
+            rf2_chart.options.scales = {y1:{max:-20, min:-100, display: false}, y2:{max:-20, min:-100, display: false}, y3:{max:-20, min:-100}};
+            if (rf2_alarm==true){
+                $('#rf2_Chart').css('backgroundColor', 'rgba(255, 0, 0, 0.2)');
+                playAudio(rf2_sound_alarm);
+            }else{
+                $('#rf2_Chart').css('backgroundColor', 'rgba(0, 0, 0, 0)');
+                stopAudio(rf2_sound_alarm);
+            }
+            if(rf2_audio==true){
+                muteAudio(rf2_sound_alarm);
+                $('#rf2_audio_on_button').css('display', 'none'); $('#rf2_audio_off_button').css('display', 'block');
+            }else{
+                unmuteAudio(rf2_sound_alarm);
+                $('#rf2_audio_on_button').css('display', 'block'); $('#rf2_audio_off_button').css('display', 'none');
+            }
+            if(rf2_module=="006"){$('#rf2_58_button').css('display', 'block');}
+            else{$('#rf2_58_button').css('display', 'none');}
+            rf2_chart.update();
+
+        } catch { console.log("Something wrong happend at getRF2ChartData!"); }
+    }
+  })
+};
+
+function updateRF2Threshold(_threshold){
+
+    //POST  New Threshold
+    var data = {'threshold': _threshold};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/threshold/rf2",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success == "true"){
+                //const str = "Threshold Updated correclty with selected value: " + String(_threshold) + ".\nWait for backend to update..."
+                //alert(str);
+            } else {
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function restoreRF2MaxPowers(){
+    //POST Request
+    var data = {'restore': 'true'};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/restore/rf2",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function updateRF2AudioSettings(){
+    if (rf2_audio==true){
+        rf2_audio=false;
+    }else{
+        rf2_audio=true;
+    }
+}
+
+function changeRF2RightFreq(){
+    //POST Request
+    var data = {'frequency': String(rf2_end_freq)};
+    console.log(data);
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/frequency/right/rf2",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function changeRF2LeftFreq(){
+    //POST Request
+    var data = {'frequency': String(rf2_start_freq)};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/frequency/left/rf2",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function changeRF2Freq24(){
+    //POST Request
+    var data = {'frequency': 'true'};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/frequency/24/rf2",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+function changeRF2Freq58(){
+    //POST Request
+    var data = {'frequency': 'true'};
+    $.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: "/api/frequency/58/rf2",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(result){
+            if (result.success != "true"){
+                alert("Something went wrong. Please try again.");
+            }
+        }
+    })
+}
+
+
+
+//------ GLOBAL FUNCTIONS ------//
+function getDevicesState(){
+  $.ajax({
+    type: "GET",
+    url: "/api/devices",
+    dataType: 'json',
+    success: function(result){
+        try {
+            if (result["rf1"]["connected"] == true) {
+                rf1_serial = result.rf1.sn;
+                rf1_module = result.rf1.module;
+                rf1_module_ext = result.rf1.module_ext;
+                rf1_threshold = result.rf1.threshold;
+                rf1_fw_version = result.rf1.fw_version;
+                rf1_alarm = result.rf1.alarm;
+                //rf1_audio = result.rf1.audio;
+                getRF1ChartData();
+            }
+            if (result["rf2"]["connected"] == true) {
+                rf2_serial = result.rf2.sn;
+                rf2_module = result.rf2.module;
+                rf2_module_ext = result.rf2.module_ext;
+                rf2_threshold = result.rf2.threshold;
+                rf2_fw_version = result.rf2.fw_version;
+                rf2_alarm = result.rf2.alarm;
+                //rf2_audio = result.rf2.audio;
+                getRF2ChartData();
+            }
+        } catch { console.log("Something wrong happend at getDevicesState!"); }
+    }
+  })
+};
+
+function playAudio(x){
+    x.play();
+}
+
+function stopAudio(x){
+    x.pause();
+    x.startTime = 0;
+}
+
+function muteAudio(x){
+    x.volume = 0;
+}
+
+function unmuteAudio(x){
+    x.volume = 0.75;
+}
+</script>
+</html>

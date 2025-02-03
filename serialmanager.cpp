@@ -38,41 +38,15 @@ void serialManager::startConnection(){
 
                 connect(rf_device, SIGNAL(log(QString)), this, SIGNAL(log(QString)), Qt::DirectConnection);
 
-                //
                 if(m_devices.length()>0)
                 {
                     if (m_devices.indexOf(rf_device)==0) { emit newRF1Explorer(rf_device);}
                     if (m_devices.indexOf(rf_device)==1) { emit newRF2Explorer(rf_device);}
-                    if (m_devices.indexOf(rf_device)==2) { emit newRF3Explorer(rf_device);}
                 }
                 if (m_debug) emit log(QString("[serialManager.startConnection] New RF connected at port %1!").arg(QString(serialName)));
             }
         }
     }
 
-}
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
-void serialManager::sendCommand(QString msg)
-{
-    QString array;
-    array.append("#");
-    array.append(char(msg.length() + 2));
-    array.append(msg);
-
-    QByteArray data = array.toUtf8();
-    emit send_data(data);
-}
-//SLOT TO SEND CONFIG FROM FRONTEND TO RF EXPLORER
-void serialManager::sendConfig(double start_freq, double end_freq)
-{
-    emit send_config(start_freq, end_freq);
-}
-//SLOT TO SEND THRESHOLD FROM FRONTEND TO RF EXPLORER
-void serialManager::editThrehold(int threshold)
-{
-    emit edit_threhold(threshold);
 }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------

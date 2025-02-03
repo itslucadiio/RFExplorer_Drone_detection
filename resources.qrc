@@ -1,5 +1,15 @@
 <RCC>
     <qresource prefix="/">
         <file>asdt_new_logo.png</file>
+        <file>reload-icon.svg</file>
+        <file alias="alarm.wav">alarm.wav</file>
+        <file alias="audio.svg">audio.svg</file>
+        <file alias="audio-muted.svg">audio-muted.svg</file>
+    </qresource>
+    <qresource prefix="/html">
+        <file alias="index.html">index.html</file>
+    </qresource>
+    <qresource prefix="/sfx">
+        <file alias="alarm.mp3">alarm.mp3</file>
     </qresource>
 </RCC>
